@@ -1,11 +1,10 @@
 SHOW DATABASES;
 SHOW TABLES;
 USE sample_data;
-DESCRIBE Users;
 
-SELECT * FROM Users;
-SELECT * FROM Restaurant;
-SELECT * FROM Items;
-SELECT * FROM Discount;
-SELECT * FROM Reviews;
-SELECT * FROM Favorites;
+SELECT username, email FROM Users WHERE user_id = 1;
+SELECT * FROM Items WHERE restaurant_id = 3;
+SELECT * FROM Reviews WHERE restaurant_id = 2;
+SELECT * FROM Favorites WHERE user_id = 1;
+SELECT * FROM Restaurant WHERE cuisine = 'chinese'; 
+SELECT * FROM Discount WHERE restaurant_id = 1;

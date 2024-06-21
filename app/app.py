@@ -2,7 +2,6 @@ import mysql.connector
 import os
 import bcrypt
 
-
 def create_connection():
     """Create a database connection to the database"""
     return mysql.connector.connect(
@@ -34,18 +33,18 @@ def add_to_favorites(conn, user_id, restaurant_id):
         print('Restaurant added to favorites.')
 
 
-def select_food_items(conn):
+def select_items(conn):
     """Query the database and print the results."""
     with conn.cursor() as cursor:
-        query = "SELECT * FROM food_items"
+        query = "SELECT * FROM Items"
         cursor.execute(query)
         rows = cursor.fetchall()
 
-        print('Printing food items')
+        print('Printing items')
         for row in rows:
             print(row)
 
 
 if __name__ == '__main__':
     with create_connection() as connection:
-        select_food_items(connection)
+        select_items(connection)
