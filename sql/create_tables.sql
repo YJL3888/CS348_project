@@ -10,7 +10,7 @@ CREATE TABLE Users (
 );
 
 CREATE TABLE Restaurant (
-    restaurant_id INT PRIMARY KEY,
+    restaurant_id AUTO_INCREMENT INT PRIMARY KEY,
     restaurant_name VARCHAR(100),
     description TEXT,
     address VARCHAR(255),
