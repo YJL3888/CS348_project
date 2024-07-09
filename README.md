@@ -75,7 +75,7 @@ DB_PASSWORD=$DATABASE_PASSWORD
 ENV="prod"
 ```
 
-Run the backend python application with your database password:
+Run the backend python application:
 
 ```sh
 cd backend
