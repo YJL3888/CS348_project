@@ -54,7 +54,7 @@ def select_items(conn):
         for row in rows:
             print(row)
 
-@app.route('/items', methods=['GET'])
+@app.get('/items')
 def get_items():
     """Endpoint to get items from the database"""
     with create_connection() as conn:
