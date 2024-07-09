@@ -1,11 +1,11 @@
 import mysql.connector
 import os
 import bcrypt
-from flask import Flask
-
+from flask import Flask, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app)
 
 @app.post('/')
 def home():
@@ -53,6 +53,16 @@ def select_items(conn):
         print('Printing items')
         for row in rows:
             print(row)
+
+@app.route('/items', methods=['GET'])
+def get_items():
+    """Endpoint to get items from the database"""
+    with create_connection() as conn:
+        with conn.cursor() as cursor:
+            query = "SELECT * FROM Items"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            return jsonify(rows)            
 
 
 if __name__ == '__main__':
