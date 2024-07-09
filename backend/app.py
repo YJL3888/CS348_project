@@ -3,9 +3,13 @@ import os
 import bcrypt
 from flask import Flask
 from flask_cors import CORS
+import config
 
 app = Flask(__name__)
 CORS(app, origins='http://localhost:5173')
+
+DB_PASSWORD = config.DB_PASSWORD
+DB_NAME = config.DB_NAME
 
 @app.post('/')
 def home():
@@ -16,8 +20,8 @@ def create_connection():
     return mysql.connector.connect(
         host='goosegoosego.clegmk4ois3q.us-east-1.rds.amazonaws.com',
         user='admin',
-        password=os.getenv('DB_PASSWORD'),
-        database='sample_data'
+        password=DB_PASSWORD,
+        database=DB_NAME
     )
 
 def hash_password(password):
