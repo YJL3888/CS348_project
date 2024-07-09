@@ -66,11 +66,20 @@ pip install -r requirements.txt
 
 ### Run the Application
 
+Before running the application, the environment variables need to be setup. To do so, create a `.env` file in the root directory.
+It should include `ENV` for choosing the sample or production database and `DB_PASSWORD` with the password to access the database.
+Here is a sample `.env` file:
+
+```
+DB_PASSWORD=$DATABASE_PASSWORD
+ENV="prod"
+```
+
 Run the backend python application with your database password:
 
 ```sh
 cd backend
-DB_PASSWORD=YOUR_PASSWORD python app.py
+python app.py
 ```
 
 Replace `YOUR_PASSWORD` with your actual database password.
