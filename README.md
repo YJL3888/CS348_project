@@ -43,3 +43,40 @@ The database has been loaded with sample data! You can check it out with
 ```sql
 SELECT * FROM food_items
 ```
+
+## App Setup
+Follow these steps to set up and run the application.
+
+### Clone the Repository
+
+First, clone the repository to your local machine:
+
+```sh
+git clone https://github.com/YJL3888/GooseGooseGo_CS348.git
+cd GooseGooseGo_CS348
+```
+
+### Install Dependencies
+
+Use `pip` to install the required dependencies from the `requirements.txt` file:
+
+```sh
+pip install -r requirements.txt
+```
+
+### Run the Application
+
+Finally, run the application with your database password:
+
+```sh
+DB_PASSWORD=YOUR_PASSWORD python app/app.py
+```
+
+Replace `YOUR_PASSWORD` with your actual database password.
+
+---
+
+### Notes
+
+- Ensure you have Python and `pip` installed on your machine.
+- Make sure your database is set up and accessible from your development environment.
