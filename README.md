@@ -74,6 +74,7 @@ Here is a sample `.env` file:
 DB_PASSWORD=$DATABASE_PASSWORD
 ENV="prod"
 ```
+Replace `$DATABASE_PASSWORD` with your actual database password.
 
 Run the backend python application:
 
@@ -82,7 +83,7 @@ cd backend
 python app.py
 ```
 
-Replace `YOUR_PASSWORD` with your actual database password.
+
 
 Then run the frontend with
 ```sh
