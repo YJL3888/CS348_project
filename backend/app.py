@@ -1,19 +1,58 @@
 import mysql.connector
-import os
 import bcrypt
-from flask import Flask
+from flask import Flask, request, abort
 from flask_cors import CORS
 import config
+import secrets
+from flask_jwt_extended import create_access_token, current_user, JWTManager, jwt_required
+
 
 app = Flask(__name__)
 CORS(app, origins='http://localhost:5173')
+app.config['JWT_SECRET_KEY'] = secrets.token_hex(64)
+jwt = JWTManager(app)
 
 DB_PASSWORD = config.DB_PASSWORD
 DB_NAME = config.DB_NAME
 
-@app.post('/')
-def home():
-    return {'result': 'Success!', 'img': 'https://preview.redd.it/lc4h7ews2rox.png?auto=webp&s=024289fd2d0929e959908fb525cda0639ce009da'}
+
+@jwt.user_identity_loader
+def user_identity_lookup(user):
+    return user['user_id']
+
+
+@jwt.user_lookup_loader
+def user_lookup(_jwt_header, jwt_data):
+    with create_connection() as connection:
+        with connection.cursor(prepared=True, dictionary=True) as cursor:
+            cursor.execute('SELECT * FROM Users WHERE user_id=%s', (jwt_data["sub"],))
+            return cursor.fetchone()
+
+
+@app.post('/login')
+def login():
+    with create_connection() as connection:
+        with connection.cursor(prepared=True, dictionary=True) as cursor:
+            print(request.form['username'])
+            cursor.execute("SELECT * FROM Users WHERE username=%s", (request.form['username'],))
+            user = cursor.fetchone()
+            print('User', user)
+            if user and bcrypt.checkpw(request.form['password'].encode('utf-8'), user['password'].encode('utf-8')):
+                return {'access_token': create_access_token(identity=user)}
+            else:
+                abort(401)
+
+
+@app.get('/whoami')
+@jwt_required()
+def who():
+    # intentionally ungolfy for demonstration
+    return {
+        'id': current_user['user_id'],
+        'username': current_user['username'],
+        'email': current_user['email']
+    }
+
 
 def create_connection():
     """Create a database connection to the database"""
@@ -77,7 +116,7 @@ def get_restaurants():
             rows = cursor.fetchall()
             return (rows)
 
+
 if __name__ == '__main__':
+    # create_account(create_connection(), 'test', 'test123!', 'test@user.com')
     app.run()
-    with create_connection() as connection:
-        select_items(connection)
