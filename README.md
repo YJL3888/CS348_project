@@ -66,13 +66,21 @@ pip install -r requirements.txt
 
 ### Run the Application
 
-Finally, run the application with your database password:
+Run the backend python application with your database password:
 
 ```sh
-DB_PASSWORD=YOUR_PASSWORD python app/app.py
+cd backend
+DB_PASSWORD=YOUR_PASSWORD python app.py
 ```
 
 Replace `YOUR_PASSWORD` with your actual database password.
+
+Then run the frontend with
+```sh
+cd frontend
+npm install
+npm run dev
+```
 
 ---
 
