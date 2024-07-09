@@ -6,7 +6,7 @@
 <!-- Header -->
 <Navbar color="form">
 	<NavBrand href="/">
-		<img src="https://via.placeholder.com/50" alt="Logo" /> <!-- Put logo here -->
+		<img src="https://via.placeholder.com/50" class="me-3 h-6 sm:h-9" alt="Logo" /> <!-- Put logo here -->
 		<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
 			GooseGooseGo
 		</span>
