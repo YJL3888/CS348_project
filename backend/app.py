@@ -1,17 +1,15 @@
 import mysql.connector
 import os
 import bcrypt
-from flask import Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app, origins='http://localhost:5173')
 
-
 @app.post('/')
 def home():
     return {'result': 'Success!', 'img': 'https://preview.redd.it/lc4h7ews2rox.png?auto=webp&s=024289fd2d0929e959908fb525cda0639ce009da'}
-
 
 def create_connection():
     """Create a database connection to the database"""
@@ -63,8 +61,17 @@ def get_items():
             query = "SELECT * FROM Items"
             cursor.execute(query)
             rows = cursor.fetchall()
-            return jsonify(rows)            
-
+            return (rows)
+        
+@app.get('/restaurants')
+def get_restaurants():
+    """Endpoint to get restaurants from the database"""
+    with create_connection() as conn:
+        with conn.cursor() as cursor:
+            query = "SELECT * FROM Restaurants"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            return (rows)
 
 if __name__ == '__main__':
     app.run()
