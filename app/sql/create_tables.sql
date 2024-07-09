@@ -1,3 +1,4 @@
+-- Replace with prod_data for production database
 CREATE DATABASE sample_data;
 USE sample_data;
 
@@ -25,7 +26,7 @@ CREATE TABLE Items (
     item_name VARCHAR(255),
     restaurant_id INT NOT NULL,
     Price FLOAT,
-    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id) ON DELETE CASCADE
+    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id) ON DELETE CASCADE,
     UNIQUE (item_name, restaurant_id)
 );
 
