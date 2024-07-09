@@ -77,6 +77,27 @@ def get_restaurants():
             rows = cursor.fetchall()
             return (rows)
 
+@app.get('/random_restaurants')
+def get_random_restaurants():
+    """Endpoint to get random restaurants from the database"""
+    with create_connection() as conn:
+        with conn.cursor() as cursor:
+            query = "SELECT * FROM Restaurants ORDER BY RAND() LIMIT 5"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            return (rows)
+
+@app.get('/restaurants/<int:restaurant_id>/menu')
+def get_menu(restaurant_id):
+    query = "SELECT item_name, price FROM Items WHERE restaurant_id = %s"
+    
+    with create_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query, (restaurant_id,))
+            rows = cursor.fetchall()
+            menu = [{'name': row[0], 'price': row[1]} for row in rows]
+            return (menu)
+
 if __name__ == '__main__':
     app.run()
     with create_connection() as connection:
