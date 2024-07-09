@@ -40,7 +40,7 @@ def login():
             if user and bcrypt.checkpw(request.form['password'].encode('utf-8'), user['password'].encode('utf-8')):
                 return {'access_token': create_access_token(identity=user)}
             else:
-                abort(401)
+                return {'error': 'Incorrect username or password.'}, 401
 
 
 @app.get('/whoami')
