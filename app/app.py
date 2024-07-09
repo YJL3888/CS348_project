@@ -1,6 +1,16 @@
 import mysql.connector
 import os
 import bcrypt
+from flask import Flask
+
+
+app = Flask(__name__)
+
+
+@app.post('/')
+def home():
+    return {'result': 'Success!', 'img': 'https://preview.redd.it/lc4h7ews2rox.png?auto=webp&s=024289fd2d0929e959908fb525cda0639ce009da'}
+
 
 def create_connection():
     """Create a database connection to the database"""
@@ -46,5 +56,6 @@ def select_items(conn):
 
 
 if __name__ == '__main__':
+    app.run()
     with create_connection() as connection:
         select_items(connection)
