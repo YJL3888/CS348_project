@@ -1,14 +1,13 @@
 import json
+import traceback
 from app import create_connection
 
 # Load the JSON file
 with open('../data_collection/restaurants.json') as f:
     data = json.load(f)
 
-# Open a connection to the AWS RDS database
+# Open connection
 conn = create_connection()
-
-# Create a cursor object
 cur = conn.cursor()
 
 # SQL query to insert data into Restaurants table
@@ -36,26 +35,26 @@ def convert_hours(hours):
             new_hours[abbreviation] = f"{start}-{end}"
     return json.dumps(new_hours)
 
-# Iterate over the JSON data and insert each record into the database
-for item in data:
-    # Convert hours to the desired format
-    hours_range = convert_hours(item['hours'])
+# Open a log file to write errors
+with open('error_log.txt', 'w') as error_log:
+    for item in data:
+        try:
+            hours_range = convert_hours(item['hours'])
 
-    # Insert restaurant data
-    restaurant_values = (item['name'], item['address'], item['category'], hours_range)
-    cur.execute(insert_restaurant_query, restaurant_values)
-    restaurant_id = cur.lastrowid  # Get the ID of the last inserted row
+            restaurant_values = (item['name'], item['address'], item['category'], hours_range)
+            cur.execute(insert_restaurant_query, restaurant_values)
+            restaurant_id = cur.lastrowid  # Get the ID of the last inserted row
 
-    # Insert menu items data
-    for menu_item in item['menuItems']:
-        # Remove the dollar sign from the price and convert it to a float
-        price = float(menu_item['price'].replace('$', ''))
-        item_values = (menu_item['name'], restaurant_id, price)
-        cur.execute(insert_item_query, item_values)
+            for menu_item in item['menuItems']:
+                # Remove the dollar sign from the price and convert it to a float
+                price = float(menu_item['price'].replace('$', ''))
+                item_values = (menu_item['name'], restaurant_id, price)
+                cur.execute(insert_item_query, item_values)
+        except Exception as e:
+            # Write the item and the error to the log file
+            error_log.write(f"Error processing item {item}: {str(e)}\n")
+            error_log.write(traceback.format_exc() + "\n")
 
-# Commit the transaction
 conn.commit()
-
-# Close the cursor and connection
 cur.close()
 conn.close()
