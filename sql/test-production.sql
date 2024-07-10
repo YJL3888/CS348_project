@@ -31,6 +31,5 @@ SELECT * FROM Favorites WHERE user_id = 1 LIMIT 10;
 -- Select all restaurants where cuisine is 'Pizza'
 SELECT * FROM Restaurants WHERE cuisine = 'Pizza' LIMIT 10;
 
--- Select all discounts where restaurant_id is 1
-SELECT * FROM Discount WHERE restaurant_id = 1 LIMIT 10;
-S
+-- Select discounts on Wednesday
+SELECT * FROM Discount WHERE weekday = 'wed' LIMIT 10;
