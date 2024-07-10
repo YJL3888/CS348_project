@@ -1,6 +1,9 @@
-<script>
+<script lang="ts">
+	import type { LayoutData } from './$types';
 	import '../app.css';
-	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button } from 'flowbite-svelte';
+	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button, Avatar, Dropdown, DropdownHeader, DropdownItem, DropdownDivider } from 'flowbite-svelte';
+
+	export let data: LayoutData;
 </script>
 
 <!-- Header -->
@@ -14,12 +17,25 @@
 		<span style="color: #4C8C2B; font-size: 1.25rem; font-weight: bold;"> GooseGooseGo </span>
 	</NavBrand>
 	<div class="flex md:order-2">
-		<Button
-			size="sm"
-			style="background-color: #4C8C2B; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem;"
-		>
-			Get started
-		</Button>
+		{#if data.user}
+			<Avatar id="user-drop" class="cursor-pointer" dot={{ color: 'green' }} />
+			<Dropdown triggeredBy="#user-drop">
+			<DropdownHeader>
+				<span class="block text-sm">{data.user.username}</span>
+				<span class="block truncate text-sm font-medium">{data.user.email}</span>
+			</DropdownHeader>
+			<DropdownDivider />
+			<DropdownItem>Sign out</DropdownItem>
+			</Dropdown>
+		{:else}
+			<Button
+				size="sm"
+				style="background-color: #4C8C2B; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem;"
+				href="/register"
+			>
+				Get started
+			</Button>
+		{/if}
 		<NavHamburger />
 	</div>
 	<NavUl>
