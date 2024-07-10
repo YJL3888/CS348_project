@@ -5,6 +5,7 @@ from flask_cors import CORS
 import config
 import secrets
 from flask_jwt_extended import create_access_token, current_user, JWTManager, jwt_required
+import operator
 
 
 app = Flask(__name__)
@@ -33,12 +34,14 @@ def user_lookup(_jwt_header, jwt_data):
 def login():
     with create_connection() as connection:
         with connection.cursor(prepared=True, dictionary=True) as cursor:
-            print(request.form['username'])
-            cursor.execute("SELECT * FROM Users WHERE username=%s", (request.form['username'],))
+            cursor.execute("SELECT * FROM Users WHERE email=%s", (request.form['email'],))
             user = cursor.fetchone()
             print('User', user)
             if user and bcrypt.checkpw(request.form['password'].encode('utf-8'), user['password'].encode('utf-8')):
-                return {'access_token': create_access_token(identity=user)}
+                return {'access_token': create_access_token(identity=user['user_id'], additional_claims={
+                    'username': user['username'],
+                    'email': user['email']
+                })}
             else:
                 return {'error': 'Incorrect username or password.'}, 401
 
@@ -52,6 +55,25 @@ def who():
         'username': current_user['username'],
         'email': current_user['email']
     }
+
+
+@app.post('/register')
+def register():
+    username, password, email = operator.itemgetter('username', 'password', 'email')(request.form)
+    with create_connection() as connection:
+        with connection.cursor(prepared=True) as cursor:
+            cursor.execute('SELECT * FROM Users where username=%s', (username,))
+            if cursor.fetchone():
+                return {'error': 'Username already exists'}, 400
+            cursor.execute('SELECT * FROM Users where email=%s', (email,))
+            if cursor.fetchone():
+                return {'error': 'Email already exists'}, 400
+            cursor.execute('INSERT INTO Users(username, password, email) VALUES (%s, %s, %s)',
+                           (username, bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()), email))
+            connection.commit()
+            return {'access_token': create_access_token(identity=cursor.lastrowid, additional_claims={
+                'username': username, 'email': email
+            })}
 
 
 def create_connection():
