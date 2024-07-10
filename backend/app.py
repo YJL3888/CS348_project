@@ -104,7 +104,7 @@ def get_items():
             query = "SELECT * FROM Items"
             cursor.execute(query)
             rows = cursor.fetchall()
-            return (rows)
+            return rows
         
 @app.get('/restaurants')
 def get_restaurants():
@@ -114,7 +114,7 @@ def get_restaurants():
             query = "SELECT * FROM Restaurants"
             cursor.execute(query)
             rows = cursor.fetchall()
-            return (rows)
+            return rows
 
 
 @app.get('/random_restaurants')
@@ -125,7 +125,7 @@ def get_random_restaurants():
             query = "SELECT * FROM Restaurants ORDER BY RAND() LIMIT 5"
             cursor.execute(query)
             rows = cursor.fetchall()
-            return (rows)
+            return rows
 
 @app.get('/restaurants/<int:restaurant_id>/menu')
 def get_menu(restaurant_id):
@@ -136,7 +136,34 @@ def get_menu(restaurant_id):
             cursor.execute(query, (restaurant_id,))
             rows = cursor.fetchall()
             menu = [{'name': row[0], 'price': row[1]} for row in rows]
-            return (menu)
+            return menu
+        
+@app.get('/search_restaurants')
+def search_restaurants():
+    search_query = request.args.get('query', '')
+    search_fields = request.args.get('fields', '').split(',')
+    
+    query_parts = []
+    params = []
+    
+    if 'name' in search_fields:
+        query_parts.append("restaurant_name LIKE %s")
+        params.append(f"%{search_query}%")
+    if 'cuisine' in search_fields:
+        query_parts.append("cuisine LIKE %s")
+        params.append(f"%{search_query}%")
+    
+
+    query = "SELECT * FROM Restaurants WHERE " + " AND ".join(query_parts)
+    
+    print("Executing query:", query)
+    print("With parameters:", params)
+    
+    with create_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query, params)
+            rows = cursor.fetchall()
+            return rows
 
 if __name__ == '__main__':
     # create_account(create_connection(), 'test', 'test123!', 'test@user.com')
