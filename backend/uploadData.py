@@ -1,9 +1,10 @@
 import json
 import traceback
+import mysql.connector
 from app import create_connection
 
 # Load the JSON file
-with open('../data_collection/restaurants.json') as f:
+with open('../data_collection/restaurantData.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 # Open connection
@@ -36,7 +37,7 @@ def convert_hours(hours):
     return json.dumps(new_hours)
 
 # Open a log file to write errors
-with open('error_log.txt', 'w') as error_log:
+with open('error_log.txt', 'w', encoding='utf-8') as error_log:
     for item in data:
         try:
             hours_range = convert_hours(item['hours'])
@@ -44,12 +45,22 @@ with open('error_log.txt', 'w') as error_log:
             restaurant_values = (item['name'], item['address'], item['category'], hours_range)
             cur.execute(insert_restaurant_query, restaurant_values)
             restaurant_id = cur.lastrowid  # Get the ID of the last inserted row
-
             for menu_item in item['menuItems']:
-                # Remove the dollar sign from the price and convert it to a float
-                price = float(menu_item['price'].replace('$', ''))
-                item_values = (menu_item['name'], restaurant_id, price)
-                cur.execute(insert_item_query, item_values)
+                try:
+                    # Remove the dollar sign from the price and convert it to a float
+                    price = float(menu_item['price'].replace('$', ''))
+                    price /= 1.2
+                    price += 0.01
+                    price = round(price * 10) / 10
+                    price -= 0.01
+                    item_values = (menu_item['name'], restaurant_id, price)
+                    cur.execute(insert_item_query, item_values)
+                except mysql.connector.Error as err:
+                    if err.errno == 1062:
+                        error_log.write(f"Duplicate menu item {menu_item['name']} in restaurant {item['name']}: {str(err)}\n")
+                    else:
+                        raise
+            print(f"Successfully processed restaurant {item['name']}")
         except Exception as e:
             # Write the item and the error to the log file
             error_log.write(f"Error processing item {item}: {str(e)}\n")
