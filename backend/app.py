@@ -122,7 +122,7 @@ def get_random_restaurants():
     """Endpoint to get random restaurants from the database"""
     with create_connection() as conn:
         with conn.cursor() as cursor:
-            query = "SELECT * FROM Restaurants ORDER BY RAND() LIMIT 5"
+            query = "SELECT * FROM Restaurants ORDER BY RAND() LIMIT 10"
             cursor.execute(query)
             rows = cursor.fetchall()
             return rows
@@ -159,7 +159,7 @@ def search_restaurants():
         query_parts.append("cuisine LIKE %s")
         params.append(f"%{search_query}%")
 
-    query = "SELECT * FROM Restaurants WHERE " + " AND ".join(query_parts)
+    query = "SELECT * FROM Restaurants WHERE " + " OR ".join(query_parts)
     
     print("Executing query:", query)
     print("With parameters:", params)
