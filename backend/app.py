@@ -5,7 +5,6 @@ from flask_cors import CORS
 import config
 import secrets
 from flask_jwt_extended import create_access_token, current_user, JWTManager, jwt_required
-import operator
 
 
 app = Flask(__name__)
@@ -15,6 +14,11 @@ jwt = JWTManager(app)
 
 DB_PASSWORD = config.DB_PASSWORD
 DB_NAME = config.DB_NAME
+
+
+@jwt.user_identity_loader
+def user_identity_lookup(user):
+    return user['user_id']
 
 
 @jwt.user_lookup_loader
@@ -34,7 +38,7 @@ def login():
             user = cursor.fetchone()
             print('User', user)
             if user and bcrypt.checkpw(request.form['password'].encode('utf-8'), user['password'].encode('utf-8')):
-                return {'access_token': create_access_token(identity=user['user_id'])}
+                return {'access_token': create_access_token(identity=user)}
             else:
                 return {'error': 'Incorrect username or password.'}, 401
 
@@ -48,22 +52,6 @@ def who():
         'username': current_user['username'],
         'email': current_user['email']
     }
-
-
-@app.post('/register')
-def register():
-    username, password, email = operator.itemgetter('username', 'email', 'password')(request.form)
-    with create_connection() as connection:
-        with connection.cursor(prepared=True) as cursor:
-            cursor.execute('SELECT * FROM Users where username=%s', (username,))
-            if cursor.fetchone():
-                return {'error': 'Username already exists'}, 400
-            cursor.execute('SELECT * FROM Users where email=%s', (email,))
-            if cursor.fetchone():
-                return {'error': 'Email already exists'}, 400
-            cursor.execute('INSERT INTO Users(username, password, email) VALUES (%s, %s, %s)',
-                           (username, bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()), email))
-            return {'access_token': create_access_token(identity=cursor.lastrowid)}
 
 
 def create_connection():
@@ -155,6 +143,12 @@ def search_restaurants():
     search_query = request.args.get('query', '')
     search_fields = request.args.get('fields', '').split(',')
     
+    if not search_query:
+        return [], 200
+
+    if not search_fields:
+        return {'error': 'fields are required'}, 400
+    
     query_parts = []
     params = []
     
@@ -164,7 +158,6 @@ def search_restaurants():
     if 'cuisine' in search_fields:
         query_parts.append("cuisine LIKE %s")
         params.append(f"%{search_query}%")
-    
 
     query = "SELECT * FROM Restaurants WHERE " + " AND ".join(query_parts)
     
@@ -176,7 +169,6 @@ def search_restaurants():
             cursor.execute(query, params)
             rows = cursor.fetchall()
             return rows
-
 
 if __name__ == '__main__':
     # create_account(create_connection(), 'test', 'test123!', 'test@user.com')
