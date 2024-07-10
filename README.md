@@ -66,14 +66,6 @@ git clone https://github.com/YJL3888/GooseGooseGo_CS348.git
 cd GooseGooseGo_CS348
 ```
 
-### Install Dependencies
-
-Use `pip` to install the required dependencies from the `requirements.txt` file:
-
-```sh
-pip install -r requirements.txt
-```
-
 ### Run the Application
 
 Before running the application, the environment variables need to be setup. To do so, create a `.env` file in the root directory.
@@ -90,10 +82,9 @@ Run the backend python application:
 
 ```sh
 cd backend
+pip install -r requirements.txt
 python app.py
 ```
-
-
 
 Then run the frontend with
 ```sh
