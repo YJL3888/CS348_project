@@ -17,11 +17,6 @@ DB_PASSWORD = config.DB_PASSWORD
 DB_NAME = config.DB_NAME
 
 
-@jwt.user_identity_loader
-def user_identity_lookup(user):
-    return user['user_id']
-
-
 @jwt.user_lookup_loader
 def user_lookup(_jwt_header, jwt_data):
     with create_connection() as connection:
