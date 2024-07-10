@@ -1,0 +1,141 @@
+--------------
+SHOW TABLES
+--------------
+
++---------------------+
+| Tables_in_prod_data |
++---------------------+
+| Discount            |
+| Favorites           |
+| Items               |
+| Restaurants         |
+| ReviewVotes         |
+| Reviews             |
+| Users               |
++---------------------+
+7 rows in set (0.03 sec)
+
+--------------
+INSERT IGNORE INTO Users (username, password, email) VALUES ('howard', '006cc76799242f7d99f74d80fb30bbd0ddcaa3bba5798caca638071482774527', 'hlou@uwaterloo.ca')
+--------------
+
+Query OK, 1 row affected (0.03 sec)
+
+--------------
+SELECT username, email FROM Users WHERE user_id = 1 LIMIT 10
+--------------
+
++----------+---------------------+
+| username | email               |
++----------+---------------------+
+| jasonliu | yj7liu@uwaterloo.ca |
++----------+---------------------+
+1 row in set (0.04 sec)
+
+--------------
+SELECT * FROM Items WHERE restaurant_id = 34 LIMIT 10
+--------------
+
++---------+-----------------------------------+---------------+-------+
+| item_id | item_name                         | restaurant_id | Price |
++---------+-----------------------------------+---------------+-------+
+|    1747 | 10" Two Topping Small Pizza       |            34 | 14.19 |
+|    1748 | 12" Two Topping Medium Pizza      |            34 | 15.39 |
+|    1749 | 14" Two Topping Large Pizza       |            34 | 17.49 |
+|    1750 | 16" Two Topping Extra Large Pizza |            34 | 19.19 |
+|    1751 | Cheesy Bread Sticks               |            34 |  7.89 |
+|    1752 | Dipping Sauce                     |            34 |  1.09 |
+|    1753 | Soft Drinks                       |            34 |  2.29 |
+|    1755 | Butter Chicken Pizza              |            34 | 15.59 |
+|    1756 | Wedges                            |            34 |  4.99 |
+|    1757 | Wings                             |            34 | 10.19 |
++---------+-----------------------------------+---------------+-------+
+10 rows in set (0.03 sec)
+
+--------------
+INSERT IGNORE INTO Reviews (restaurant_id, user_id, rating, comments, timestamp)
+VALUES (33, 1, 4, 'The Margherita pizza was delicious, with a perfect balance of cheese and tomato sauce.', '2024-06-06 12:30:00')
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.03 sec)
+
+--------------
+SELECT * FROM Reviews WHERE restaurant_id = 33 LIMIT 10
+--------------
+
++-----------+---------------+---------+--------+----------------------------------------------------------------------------------------------+---------------------+
+| review_id | restaurant_id | user_id | rating | comments                                                                                     | timestamp           |
++-----------+---------------+---------+--------+----------------------------------------------------------------------------------------------+---------------------+
+|        25 |            33 |       1 |      4 | The Margherita pizza was delicious, with a perfect balance of cheese and tomato sauce.       | 2024-06-06 12:30:00 |
+|        29 |            33 |       2 |      2 | Pizza was overcooked and too salty for my taste.                                             | 2024-06-10 19:30:00 |
+|        27 |            33 |       3 |      5 | Absolutely loved the pepperoni pizza, very flavorful and the crust was perfect.              | 2024-06-08 18:20:00 |
+|        26 |            33 |       4 |      3 | Great ambiance, but the service was a bit slow.                                              | 2024-06-07 14:45:00 |
+|        31 |            33 |       5 |      3 | The meat lovers pizza was average, but the dessert pizza was amazing.                        | 2024-06-12 17:45:00 |
+|        28 |            33 |       7 |      4 | The veggie pizza was fresh and had a good variety of toppings, but could use more seasoning. | 2024-06-09 13:15:00 |
+|        30 |            33 |       9 |      5 | Best pizza in town! The dough was soft and the ingredients were fresh.                       | 2024-06-11 11:00:00 |
++-----------+---------------+---------+--------+----------------------------------------------------------------------------------------------+---------------------+
+7 rows in set (0.05 sec)
+
+--------------
+INSERT IGNORE INTO Favorites (user_id, restaurant_id)
+VALUES (1, 45)
+--------------
+
+Query OK, 1 row affected (0.03 sec)
+
+--------------
+SELECT * FROM Favorites WHERE user_id = 1 LIMIT 10
+--------------
+
++---------+---------------+
+| user_id | restaurant_id |
++---------+---------------+
+|       1 |            45 |
+|       1 |            72 |
+|       1 |           118 |
+|       1 |            45 |
+|       1 |            45 |
++---------+---------------+
+5 rows in set (0.03 sec)
+
+--------------
+SELECT * FROM Restaurants WHERE cuisine = 'Pizza' LIMIT 10
+--------------
+
++---------------+---------------------------------------------+----------------------------------------------------------+------------------------+--------------+----------------------------------------+---------+-------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+| restaurant_id | restaurant_name                             | description                                              | address                | phone_number | website                                | cuisine | price_range | hours_range                                                                                                                                  |
++---------------+---------------------------------------------+----------------------------------------------------------+------------------------+--------------+----------------------------------------+---------+-------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+|            33 | Toma's Pizza                                | Toma's Pizza - Delicious and authentic pizza.            | 251 Hemlock Street     | 519-342-1933 | https://tomaspizza.ca                  | Pizza   |           1 | {"mon": "1100-1200", "tue": "1100-1200", "wed": "1100-1200", "thu": "1100-1200", "fri": "1100-200", "sat": "1100-200", "sun": "1100-1200"}   |
+|            34 | Gino's Pizza (King St N and University Ave) | Gino's Pizza - Your favorite pizza spot.                 | 253 King St N          | 519-747-4466 | https://ginospizza.ca                  | Pizza   |           1 | {"mon": "1100-350", "tue": "1100-350", "wed": "1100-350", "thu": "1100-350", "fri": "1100-350", "sat": "1100-350", "sun": "1100-350"}        |
+|            35 | Bianca's Pizza                              | Bianca's Pizza - Fresh and tasty pizzas.                 | 363 King St N          | 519-880-1500 | https://www.biancaspizza.ca/index.html | Pizza   |           1 | {"mon": "1030-1230", "tue": "1030-1230", "wed": "1030-1230", "thu": "1030-1230", "fri": "1100-1250", "sat": "1100-130", "sun": "1100-1245"}  |
+|            36 | Cheez-Us Pizza                              | Cheez-Us Pizza - Heavenly cheesy goodness.               | 380 King St N          | 519-725-5333 | https://cheezus.ca                     | Pizza   |           1 | {"sun": "1100-1150"}                                                                                                                         |
+|            37 | Twice the Deal Pizza (402 King St N)        | Twice the Deal Pizza - Two pizzas, one great price.      | 402 King St N          | 519-884-8000 | twicethedealpizza.com                  | Pizza   |           1 | {"mon": "900-100", "tue": "900-100", "wed": "900-100", "thu": "900-100", "fri": "900-357", "sat": "900-357", "sun": "900-200"}               |
+|            38 | 241 Pizza (258 King St. N.)                 | 241 Pizza - Two for one pizza deals.                     | 258 King Street North  | 519-804-0241 | https://www.241pizza.com               | Pizza   |           1 | {"mon": "1100-1150", "tue": "1100-1150", "wed": "1100-1150", "thu": "1100-1150", "fri": "1100-1150", "sat": "1100-1150", "sun": "1100-1150"} |
+|            39 | Double Double Pizza & Chicken (347 Erb St)  | Double Double Pizza & Chicken - Pizza and chicken combo. | 347 Erb St W           | 519-954-7666 | http://www.doubledoublepizza.ca        | Pizza   |           1 | {"mon": "1100-1140", "tue": "1100-1140", "wed": "1100-1140", "thu": "1100-1230", "fri": "1100-140", "sat": "1100-140", "sun": "1100-1040"}   |
+|            40 | Red Swan Pizza (Waterloo Westmount Rd)      | Red Swan Pizza - Delicious pizzas at a great price.      | 50 Westmount Rd N C3-A | 226-647-0293 | waterloo.redswanpizza.ca               | Pizza   |           1 | {"mon": "1100-130", "tue": "1100-130", "wed": "1100-130", "thu": "1100-130", "sun": "1100-130"}                                              |
+|            41 | Pizza Bite                                  | Pizza Bite - Bite-sized pizza goodness.                  | 244 Margaret Ave       | 519-585-7720 | pizzabitekitchener.com                 | Pizza   |           1 | {"mon": "1200-1200", "tue": "1200-1200", "wed": "1200-1200", "thu": "1200-1200", "fri": "1200-1200", "sat": "1200-1200", "sun": "1200-1100"} |
+|            42 | Culture Crust                               | Culture Crust - Where pizza meets culture.               | 825 Weber Street East  | 548-398-0098 | https://www.culturecrustkwc.ca         | Pizza   |           1 | {"mon": "1000-200", "tue": "1000-200", "wed": "1000-200", "thu": "1000-200", "fri": "1000-300", "sat": "1000-300", "sun": "1000-200"}        |
++---------------+---------------------------------------------+----------------------------------------------------------+------------------------+--------------+----------------------------------------+---------+-------------+----------------------------------------------------------------------------------------------------------------------------------------------+
+10 rows in set (0.04 sec)
+
+--------------
+SELECT * FROM Discount WHERE weekday = 'wed' LIMIT 10
+--------------
+
++-------------+---------------+---------+----------+---------------+---------+
+| discount_id | restaurant_id | item_id | discount | discount_type | weekday |
++-------------+---------------+---------+----------+---------------+---------+
+|           1 |           299 |   17893 |      0.1 | $             | wed     |
+|           8 |           164 |    9294 |        1 | $             | wed     |
+|           9 |           190 |   10851 |      1.3 | $             | wed     |
+|          10 |           164 |    9293 |        1 | $             | wed     |
+|          11 |           190 |   10848 |        1 | $             | wed     |
+|          13 |           176 |   10103 |        4 | $             | wed     |
+|          14 |           526 |   30027 |        2 | $             | wed     |
+|          15 |           196 |   11137 |       40 | %             | wed     |
+|          16 |           197 |   11194 |       40 | %             | wed     |
+|          17 |           196 |   11136 |       40 | %             | wed     |
++-------------+---------------+---------+----------+---------------+---------+
+10 rows in set (0.04 sec)
+
+Bye
