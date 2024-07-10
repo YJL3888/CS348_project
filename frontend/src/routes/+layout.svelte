@@ -25,7 +25,7 @@
 				<span class="block truncate text-sm font-medium">{data.user.email}</span>
 			</DropdownHeader>
 			<DropdownDivider />
-			<DropdownItem>Sign out</DropdownItem>
+			<DropdownItem href="/logout">Log out</DropdownItem>
 			</Dropdown>
 		{:else}
 			<Button
