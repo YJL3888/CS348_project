@@ -44,6 +44,16 @@ The database has been loaded with sample data! You can check it out with
 SELECT * FROM food_items
 ```
 
+### Scrape the Production Database
+First, run data_collection/getRestaurants.js with Node. Make sure appropriate packages are installed (puppeteer)
+
+This should generate a file restaurants.json, and a file errors.json for various error logging.
+
+Next, run data_collection/processRestaurants.js with Node. This should generate a file restaurantData.json. You may have to bookend the file with [] to format it properly for the upload phase.
+
+Finally, change the ENV field in backend's .env file to "prod" and run backend/uploadData.py. This should upload all the scraped data to the database appropriately.
+
+
 ## App Setup
 Follow these steps to set up and run the application.
 
