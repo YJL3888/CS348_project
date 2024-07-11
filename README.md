@@ -13,12 +13,10 @@ For our project, we have decided to use AWS RDS running MySQL in the us-east-1 (
    - **Hostname:** Enter the RDS endpoint from AWS. You can find this in the AWS Management Console under the RDS instance details. It usually looks like `your-db-instance.c123456789012.us-west-2.rds.amazonaws.com`.
    - **Port:** Enter the port number your database listens on. The default port for MySQL is `3306`.
    - **Username/Password:** Enter the database username/password provided by your AWS RDS setup.
-4. Test connection to make sure everything is working and click OK
+4. Test connection to make sure everything is working and click OK.
 5. You are now connected to the RDS database!
 
 ### Create Sample Database
-Here are the queries necessary to create a sample database
-
 Create a database and use it for upcoming queries
 ```sql
 CREATE DATABASE sample_db;
