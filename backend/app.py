@@ -121,26 +121,6 @@ def get_review(restaurant_id):
             cursor.execute('SELECT * FROM Reviews WHERE restaurant_id=%s', (restaurant_id,))
             reviews = cursor.fetchall()
             return reviews
-        
-@app.get('/discounts/<int:restaurant_id')
-def get_discounts_for_restaurant(restaurant_id):
-    with create_connection() as connection:
-        with connection.cursor(prepared=True) as cursor:
-            cursor.execute('SELECT * FROM Discount WHERE restaurant_id=%s', (restaurant_id,))
-            discounts = cursor.fetchall()
-            return discounts
-        
-@app.get('/discounts')
-def get_discounts_for_day():
-    weekday = request.args.get('weekday', '')
-    if not weekday:
-        return {'error': 'Weekday is required!'}
-    
-    with create_connection() as connection:
-        with connection.cursor(prepared=True) as cursor:
-            cursor.execute('SELECT * FROM Discount WHERE weekday=%s', (weekday))
-            discounts = cursor.fetchall()
-            return discounts
 
 
 if __name__ == '__main__':
