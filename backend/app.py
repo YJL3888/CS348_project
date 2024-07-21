@@ -112,6 +112,15 @@ def add_review():
             connection.commit()
             
             return {'message': 'Review added successfully!'}
+        
+        
+@app.get('/reviews/<int:restaurant_id>')
+def get_review(restaurant_id):
+    with create_connection() as connection:
+        with connection.cursor(prepared=True) as cursor:
+            cursor.execute('SELECT * FROM Reviews WHERE restaurant_id=%s', (restaurant_id,))
+            reviews = cursor.fetchall()
+            return reviews
 
 
 def hash_password(password):
