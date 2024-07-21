@@ -69,6 +69,19 @@ def register():
             return {'access_token': create_access_token(identity=cursor.lastrowid, additional_claims={
                 'username': username, 'email': email
             })}
+            
+@app.post('/favorites')
+@jwt_required()
+def add_to_favorite():
+    data = request.get_json()
+    user_id = current_user['user_id']
+    restaurant_id = data['restaurant_id']
+    with create_connection() as connection:
+        with connection.cursor(prepared=True) as cursor:
+            cursor.execute('INSERT INTO Favorites(user_id, restaurant_id) VALUES (%s, %s)',(user_id, restaurant_id))
+            connection.commit()
+            return {'message': 'Restaurant added to favorites'}
+    
 
 
 def create_connection():
