@@ -1,20 +1,21 @@
-import mysql.connector
-import bcrypt
-from flask import Flask, request, abort
-from flask_cors import CORS
 import config
+import os
+import bcrypt
+from flask import Flask, request
+from flask_cors import CORS
 import secrets
 from flask_jwt_extended import create_access_token, current_user, JWTManager, jwt_required
 import operator
+from datetime import datetime
+from db_util import create_connection
+import restaurants
 
 
 app = Flask(__name__)
-CORS(app, origins='http://localhost:5173')
+CORS(app, origins=os.environ['CORS_ORIGINS'])
 app.config['JWT_SECRET_KEY'] = secrets.token_hex(64)
 jwt = JWTManager(app)
-
-DB_PASSWORD = config.DB_PASSWORD
-DB_NAME = config.DB_NAME
+app.register_blueprint(restaurants.bp)
 
 
 @jwt.user_lookup_loader
@@ -69,7 +70,8 @@ def register():
             return {'access_token': create_access_token(identity=cursor.lastrowid, additional_claims={
                 'username': username, 'email': email
             })}
-            
+
+
 @app.post('/favorites')
 @jwt_required()
 def add_to_favorites():
@@ -78,12 +80,13 @@ def add_to_favorites():
     restaurant_id = data['restaurant_id']
     with create_connection() as connection:
         with connection.cursor(prepared=True) as cursor:
-            cursor.execute('INSERT INTO Favorites(user_id, restaurant_id) VALUES (%s, %s)',(user_id, restaurant_id))
+            cursor.execute('INSERT INTO Favorites(user_id, restaurant_id) VALUES (%s, %s)', (user_id, restaurant_id))
             connection.commit()
             return {'message': 'Restaurant added to favorites'}
-    
+
+
 @app.get('/favorites')
-@jwt_required
+@jwt_required()
 def get_favorites():
     user_id = current_user['user_id']
     with create_connection() as connection:
@@ -91,7 +94,8 @@ def get_favorites():
             cursor.execute('SELECT * FROM Favorites WHERE user_id=%s', (user_id,))
             favs = cursor.fetchall()
             return favs
-        
+
+
 @app.post('/reviews')
 @jwt_required()
 def add_review():
@@ -108,20 +112,12 @@ def add_review():
             connection.commit()
             
             return {'message': 'Review added successfully!'}
-            
-            
-def create_connection():
-    """Create a database connection to the database"""
-    return mysql.connector.connect(
-        host='goosegoosego.clegmk4ois3q.us-east-1.rds.amazonaws.com',
-        user='admin',
-        password=DB_PASSWORD,
-        database=DB_NAME
-    )
+
 
 def hash_password(password):
     """Hash a password for storing."""
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
 
 def create_account(conn, username, password, email):
     """Create a new user account"""
@@ -131,6 +127,7 @@ def create_account(conn, username, password, email):
         cursor.execute(query, (username, hashed_password, email))
         conn.commit()
         print('Account created successfully.')
+
 
 def add_to_favorites(conn, user_id, restaurant_id):
     """Add a restaurant to a user's favorites"""
@@ -152,80 +149,6 @@ def select_items(conn):
         for row in rows:
             print(row)
 
-@app.get('/items')
-def get_items():
-    """Endpoint to get items from the database"""
-    with create_connection() as conn:
-        with conn.cursor() as cursor:
-            query = "SELECT * FROM Items"
-            cursor.execute(query)
-            rows = cursor.fetchall()
-            return rows
-        
-@app.get('/restaurants')
-def get_restaurants():
-    """Endpoint to get restaurants from the database"""
-    with create_connection() as conn:
-        with conn.cursor() as cursor:
-            query = "SELECT * FROM Restaurants"
-            cursor.execute(query)
-            rows = cursor.fetchall()
-            return rows
-
-
-@app.get('/random_restaurants')
-def get_random_restaurants():
-    """Endpoint to get random restaurants from the database"""
-    with create_connection() as conn:
-        with conn.cursor() as cursor:
-            query = "SELECT * FROM Restaurants ORDER BY RAND() LIMIT 10"
-            cursor.execute(query)
-            rows = cursor.fetchall()
-            return rows
-
-@app.get('/restaurants/<int:restaurant_id>/menu')
-def get_menu(restaurant_id):
-    query = "SELECT item_name, price FROM Items WHERE restaurant_id = %s"
-    
-    with create_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query, (restaurant_id,))
-            rows = cursor.fetchall()
-            menu = [{'name': row[0], 'price': row[1]} for row in rows]
-            return menu
-        
-@app.get('/search_restaurants')
-def search_restaurants():
-    search_query = request.args.get('query', '')
-    search_fields = request.args.get('fields', '').split(',')
-    
-    if not search_query:
-        return [], 200
-
-    if not search_fields:
-        return {'error': 'fields are required'}, 400
-    
-    query_parts = []
-    params = []
-    
-    if 'name' in search_fields:
-        query_parts.append("restaurant_name LIKE %s")
-        params.append(f"%{search_query}%")
-    if 'cuisine' in search_fields:
-        query_parts.append("cuisine LIKE %s")
-        params.append(f"%{search_query}%")
-
-    query = "SELECT * FROM Restaurants WHERE " + " OR ".join(query_parts)
-    
-    print("Executing query:", query)
-    print("With parameters:", params)
-    
-    with create_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query, params)
-            rows = cursor.fetchall()
-            return rows
 
 if __name__ == '__main__':
-    # create_account(create_connection(), 'test', 'test123!', 'test@user.com')
     app.run()
