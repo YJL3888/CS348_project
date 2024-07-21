@@ -69,3 +69,52 @@ def search_restaurants():
             cursor.execute(query, params)
             rows = cursor.fetchall()
             return rows
+        
+@bp.post('/toggle_favorites')
+def toggle_favorites():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    restaurant_id = data.get('restaurant_id')
+
+    if not user_id or not restaurant_id:
+        return {'error': 'Both user_id and restaurant_id are required'}, 400
+
+    try:
+        with create_connection() as conn:
+            with conn.cursor() as cursor:
+                # Check if the entry already exists
+                check_query = "SELECT EXISTS(SELECT 1 FROM Favorites WHERE user_id=%s AND restaurant_id=%s)"
+                cursor.execute(check_query, (user_id, restaurant_id))
+                exists = cursor.fetchone()[0]
+
+                if exists:
+                    # If exists, remove it
+                    delete_query = "DELETE FROM Favorites WHERE user_id=%s AND restaurant_id=%s"
+                    cursor.execute(delete_query, (user_id, restaurant_id))
+                else:
+                    # If not exists, add it
+                    insert_query = "INSERT INTO Favorites (user_id, restaurant_id) VALUES (%s, %s)"
+                    cursor.execute(insert_query, (user_id, restaurant_id))
+
+                conn.commit()
+                action = "removed from" if exists else "added to"
+                return {'message': f'Restaurant {action} favorites successfully'}, 200
+    except Exception as e:
+        print(f"Error toggling favorite: {e}")
+        return {'error': 'Failed to toggle favorite'}, 500
+    
+@bp.get('/favorites')
+def get_favorites():
+    user_id = request.args.get('user_id', default=None, type=int)
+    if not user_id:
+        return jsonify({'error': 'Missing user_id'}), 400
+
+    query = "SELECT restaurant_id FROM Favorites WHERE user_id = %s"
+
+    with create_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query, (user_id,))
+            rows = cursor.fetchall()
+            favorite_restaurant_ids = [row[0] for row in rows]
+
+    return favorite_restaurant_ids, 200
