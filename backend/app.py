@@ -91,7 +91,25 @@ def get_favorites():
             cursor.execute('SELECT * FROM Favorites WHERE user_id=%s', (user_id,))
             favs = cursor.fetchall()
             return favs
-
+        
+@app.post('/reviews')
+@jwt_required()
+def add_review():
+    data = request.get_json()
+    restaurant_id = data['restaurant_id']
+    user_id = current_user['user_id']
+    rating = data['rating']
+    comments = data.get('comments', '')
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    with create_connection() as connection:
+        with connection.cursor(prepared=True) as cursor:
+            cursor.execute('INSERT INTO Reviews(restaurant_id, user_id, rating, comments, timestamp) VALUES (%s, %s, %s, %s, %s)', (restaurant_id, user_id, rating, comments, timestamp))
+            connection.commit()
+            
+            return {'message': 'Review added successfully!'}
+            
+            
 def create_connection():
     """Create a database connection to the database"""
     return mysql.connector.connect(
