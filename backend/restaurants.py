@@ -70,6 +70,7 @@ def search_restaurants():
             rows = cursor.fetchall()
             return rows                
 
+
 @bp.post('/toggle_favorites')
 def toggle_favorites():
     data = request.get_json()
@@ -102,12 +103,13 @@ def toggle_favorites():
     except Exception as e:
         print(f"Error toggling favorite: {e}")
         return {'error': 'Failed to toggle favorite'}, 500
-    
-@bp.get('/favorites')
+
+
+@bp.get('/favorites')  # TODO: use @jwt_required()
 def get_favorites():
     user_id = request.args.get('user_id', default=None, type=int)
     if not user_id:
-        return jsonify({'error': 'Missing user_id'}), 400
+        return {'error': 'Missing user_id'}, 400
 
     query = "SELECT restaurant_id FROM Favorites WHERE user_id = %s"
 
@@ -118,14 +120,17 @@ def get_favorites():
             favorite_restaurant_ids = [row[0] for row in rows]
 
     return favorite_restaurant_ids, 200
-@bp.get('/discounts/<int:restaurant_id')
+
+
+@bp.get('/discounts/<int:restaurant_id>')
 def get_discounts_for_restaurant(restaurant_id):
     with create_connection() as connection:
         with connection.cursor(prepared=True) as cursor:
             cursor.execute('SELECT * FROM Discount WHERE restaurant_id=%s', (restaurant_id,))
             discounts = cursor.fetchall()
             return discounts
-        
+
+
 @bp.get('/discounts')
 def get_discounts_for_day():
     weekday = request.args.get('weekday', '')
