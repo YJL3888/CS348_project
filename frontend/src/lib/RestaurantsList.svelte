@@ -89,19 +89,6 @@
 	}
 </style>
 
-<div class="search-bar">
-	<input type="text" bind:value={searchQuery} placeholder="Search..." />
-	<div>
-		<label>
-			<input type="checkbox" value="name" bind:group={searchFields} checked /> Name
-		</label>
-		<label>
-			<input type="checkbox" value="cuisine" bind:group={searchFields} checked /> Cuisine
-		</label>
-	</div>
-	<button on:click={performSearch} class="search-button rounded bg-green-600 px-4 py-2 text-white">Search</button>
-</div>
-
 <div class="restaurant-list">
 	{#each results as restaurant}
 		<RestaurantCard {restaurant} {toggleFavorite} {toggleMenu} {toggleHover} />
