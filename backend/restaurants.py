@@ -68,8 +68,8 @@ def search_restaurants():
         with conn.cursor() as cursor:
             cursor.execute(query, params)
             rows = cursor.fetchall()
-            return rows
-        
+            return rows                
+
 @bp.post('/toggle_favorites')
 def toggle_favorites():
     data = request.get_json()
@@ -118,3 +118,22 @@ def get_favorites():
             favorite_restaurant_ids = [row[0] for row in rows]
 
     return favorite_restaurant_ids, 200
+@bp.get('/discounts/<int:restaurant_id')
+def get_discounts_for_restaurant(restaurant_id):
+    with create_connection() as connection:
+        with connection.cursor(prepared=True) as cursor:
+            cursor.execute('SELECT * FROM Discount WHERE restaurant_id=%s', (restaurant_id,))
+            discounts = cursor.fetchall()
+            return discounts
+        
+@bp.get('/discounts')
+def get_discounts_for_day():
+    weekday = request.args.get('weekday', '')
+    if not weekday:
+        return {'error': 'Weekday is required!'}
+    
+    with create_connection() as connection:
+        with connection.cursor(prepared=True) as cursor:
+            cursor.execute('SELECT * FROM Discount WHERE weekday=%s', (weekday))
+            discounts = cursor.fetchall()
+            return discounts
