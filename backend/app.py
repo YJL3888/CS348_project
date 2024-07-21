@@ -7,8 +7,9 @@ import secrets
 from flask_jwt_extended import create_access_token, current_user, JWTManager, jwt_required
 import operator
 from datetime import datetime
-from db_util import create_connection
+from db_util import create_connection, hash_password
 import restaurants
+import password_reset
 
 
 app = Flask(__name__)
@@ -16,6 +17,7 @@ CORS(app, origins=os.environ['CORS_ORIGINS'])
 app.config['JWT_SECRET_KEY'] = secrets.token_hex(64)
 jwt = JWTManager(app)
 app.register_blueprint(restaurants.bp)
+app.register_blueprint(password_reset.bp)
 
 
 @jwt.user_lookup_loader
@@ -65,7 +67,7 @@ def register():
             if cursor.fetchone():
                 return {'error': 'Email already exists'}, 400
             cursor.execute('INSERT INTO Users(username, password, email) VALUES (%s, %s, %s)',
-                           (username, bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()), email))
+                           (username, hash_password(password), email))
             connection.commit()
             return {'access_token': create_access_token(identity=cursor.lastrowid, additional_claims={
                 'username': username, 'email': email
