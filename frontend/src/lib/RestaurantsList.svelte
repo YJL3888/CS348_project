@@ -1,6 +1,10 @@
 <script lang="ts">
     import RestaurantCard from './RestaurantCard.svelte';
-	import { searchResults } from '../stores/searchStore'; 
+    import { searchResults } from '../stores/searchStore';
+    import { currentPage } from '../stores/paginationStore';
+    import { PaginationItem } from 'flowbite-svelte';
+    import { ArrowLeftOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
+    import { derived } from 'svelte/store';
 
     type Restaurant = {
         id: number;
@@ -76,21 +80,69 @@
             console.error('Error toggling favorite:', error);
         }
     }
-	searchResults.subscribe(value => {
+
+    searchResults.subscribe(value => {
         results = value;
     });
+
+    // Pagination logic
+    const itemsPerPage = 10;
+    const totalPages = derived([searchResults], ([$searchResults]) => Math.ceil($searchResults.length / itemsPerPage));
+
+    const paginatedResults = derived([searchResults, currentPage], ([$searchResults, $currentPage]) => {
+        const start = ($currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        return $searchResults.slice(start, end);
+    });
+
+    function setPage(page: number) {
+        currentPage.set(page);
+    }
+
+    function previousPage() {
+        if ($currentPage > 1) {
+            setPage($currentPage - 1);
+        }
+    }
+
+    function nextPage() {
+        if ($currentPage < $totalPages) {
+            setPage($currentPage + 1);
+        }
+    }
 </script>
 
 <style>
-	.restaurant-list {
-		display: flex;
-		flex-direction: column;
-		gap: 16px; /* Adjust this value to set the padding between cards */
-	}
+    .restaurant-list {
+        display: flex;
+        flex-direction: column;
+		align-items: center;
+        gap: 16px; /* Adjust this value to set the padding between cards */
+    }
+
+    .pagination-controls {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px; /* Adjust this value to set the margin from the restaurant cards */
+    }
 </style>
 
-<div class="restaurant-list">
-	{#each results as restaurant}
-		<RestaurantCard {restaurant} {toggleFavorite} {toggleMenu} {toggleHover} />
-	{/each}
-</div>
+{#if results.length > 0}
+    <div class="restaurant-list">
+        {#each $paginatedResults as restaurant}
+            <RestaurantCard {restaurant} {toggleFavorite} {toggleMenu} {toggleHover} />
+        {/each}
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-controls mt-10 mb-10">
+        <PaginationItem pill class="flex items-center mr-20" on:click={previousPage} disabled={$currentPage === 1}>
+            <ArrowLeftOutline class="me-2 w-3.5 h-3.5" />
+            Previous
+        </PaginationItem>
+        <PaginationItem pill class="flex items-center" on:click={nextPage} disabled={$currentPage === $totalPages}>
+            Next
+            <ArrowRightOutline class="ms-2 w-3.5 h-3.5" />
+        </PaginationItem>
+    </div>
+{/if}
