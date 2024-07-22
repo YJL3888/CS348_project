@@ -1,9 +1,10 @@
-<script>
+<script lang="ts">
     import RestaurantsList from '$lib/RestaurantsList.svelte';
+    import type { PageData } from './$types';
     import { searchResults } from '../stores/searchStore';
     import { currentPage } from '../stores/paginationStore';
 
-    export let data;
+    export let data: PageData;
 
     let results = [];
 
@@ -27,6 +28,6 @@
         {#if results.length !== 0}
             <h1 class="text-2xl font-bold mb-6">Search Results</h1> 
         {/if}
-        <RestaurantsList {results} user={data.user} />
+        <RestaurantsList {results} {data} />
     </div>
 </div>
