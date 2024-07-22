@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Card, Rating, Badge } from 'flowbite-svelte';
 	import { HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
-
+	import type { PageData } from '../routes/$types';
 	export let restaurant: {
 		id: number;
 		name: string;
@@ -23,9 +23,11 @@
 	export let toggleFavorite: (restaurantId: number) => void;
 	export let toggleMenu: (restaurant: typeof restaurant) => void;
 	export let toggleHover: (restaurantId: number, isHovering: boolean) => void;
+	export let data: PageData
 </script>
 
 <Card href="/" horizontal size="lg" class="relative">
+	{#if data?.user?.sub}
 	<button
 		type="button"
 		class="absolute top-4 right-4"
@@ -41,6 +43,7 @@
 			<HeartOutline class="text-red-500" />
 		{/if}
 	</button>
+	{/if}
 	<div style="pointer-events: none;">
 		<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{restaurant.name}</h5>
         <Rating id="example-3" total={5} rating={3.4}>

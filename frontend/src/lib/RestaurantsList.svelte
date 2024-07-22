@@ -5,6 +5,9 @@
     import { PaginationItem } from 'flowbite-svelte';
     import { ArrowLeftOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
     import { derived } from 'svelte/store';
+	import type { PageData } from '../routes/$types';
+	import { writable } from 'svelte/store';
+	import { PUBLIC_BACKEND_BASE } from '$env/static/public';
 
     type Restaurant = {
         id: number;
@@ -27,26 +30,36 @@
     };
 
     export let results: Restaurant[] = [];
-    let menu: { [key: number]: MenuItem[] } = {};
-    export let user; // Assuming user data is passed to this component
+    let menu = writable<{ [key: number]: MenuItem[] }>({});
+    export let data: PageData; // Assuming user data is passed to this component
 
     async function fetchMenu(restaurantId: number): Promise<void> {
-        const response = await fetch(`http://localhost:5000/restaurants/${restaurantId}/menu`);
-        if (!response.ok) {
-            console.error(`Failed to fetch menu: ${response.statusText}`);
-            return;
-        }
-        const data = await response.json();
-        menu[restaurantId] = data;
+    const response = await fetch(PUBLIC_BACKEND_BASE + `/restaurants/${restaurantId}/menu`);
+    if (!response.ok) {
+        console.error(`Failed to fetch menu: ${response.statusText}`);
+        return;
     }
+    const newData = await response.json();
+    menu.update(currentMenu => {
+        currentMenu[restaurantId] = newData;
+        return currentMenu;
+    });
+}
 
-    async function toggleMenu(restaurant: Restaurant): Promise<void> {
-        if (menu[restaurant.id]) {
-            delete menu[restaurant.id];
+async function toggleMenu(restaurant: Restaurant): Promise<void> {
+    menu.update(currentMenu => {
+        if (currentMenu[restaurant.id]) {
+            const { [restaurant.id]: _, ...rest } = currentMenu;
+            return rest;
         } else {
-            await fetchMenu(restaurant.id);
+            return currentMenu;
         }
+    });
+
+    if (!(await $menu)[restaurant.id]) {
+        await fetchMenu(restaurant.id);
     }
+}
 
     function toggleHover(restaurantId: number, isHovering: boolean) {
         const restaurantIndex = results.findIndex((r) => r.id === restaurantId);
@@ -57,12 +70,12 @@
 
     async function toggleFavorite(restaurantId: number) {
         try {
-            const response = await fetch('http://localhost:5000/toggle_favorites', {
+            const response = await fetch(PUBLIC_BACKEND_BASE + '/toggle_favorites', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ user_id: user?.sub, restaurant_id: restaurantId })
+                body: JSON.stringify({ user_id: data?.user?.sub, restaurant_id: restaurantId })
             });
 
             if (!response.ok) {
@@ -74,8 +87,7 @@
             if (restaurantIndex !== -1) {
                 results[restaurantIndex].favorite = !results[restaurantIndex].favorite;
             }
-
-            console.log(`Toggled favorite for restaurant: ${restaurantId}, User ID: ${user?.sub}`);
+            console.log(`Toggled favorite for restaurant: ${restaurantId}, User ID: ${data?.user?.sub}`);
         } catch (error) {
             console.error('Error toggling favorite:', error);
         }
@@ -130,7 +142,7 @@
 {#if results.length > 0}
     <div class="restaurant-list">
         {#each $paginatedResults as restaurant}
-            <RestaurantCard {restaurant} {toggleFavorite} {toggleMenu} {toggleHover} />
+            <RestaurantCard {restaurant} {toggleFavorite} {toggleMenu} {toggleHover} {data}/>
         {/each}
     </div>
 
