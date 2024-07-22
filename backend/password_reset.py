@@ -37,9 +37,7 @@ def send_password_reset_token():
 
             <p>You requested a password reset for your GooseGooseGo account at {utc_time}.</p>
             <p>Use this token to complete the process:</p>
-            <pre>
-            {token}
-            </pre>
+            <pre>{token}</pre>
             <p>If this was not you, you can disregard this email.</p>
             ''', subtype='html')
             smtp = smtplib.SMTP('smtp.gmail.com', 587)
