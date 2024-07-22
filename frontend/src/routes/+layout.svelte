@@ -1,12 +1,11 @@
 <script lang="ts">
     import type { LayoutData } from './$types';
     import '../app.css';
-    import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button, Avatar, Dropdown, DropdownHeader, DropdownItem, DropdownDivider } from 'flowbite-svelte';
+    import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button, Avatar, Dropdown, DropdownHeader, DropdownItem, DropdownDivider, Checkbox } from 'flowbite-svelte';
     import { Search, Button as SearchButton, Dropdown as SearchDropdown, DropdownItem as SearchDropdownItem } from 'flowbite-svelte';
     import { SearchOutline, ChevronDownOutline } from 'flowbite-svelte-icons';
     import { createEventDispatcher } from 'svelte';
 	import { searchResults, setSearchResults } from '../stores/searchStore';
-
 
     export let data: LayoutData;
 
@@ -18,6 +17,7 @@
 
     let selectCategory = 'All categories';
     let searchQuery = '';
+    let showFavourites = false;  // Variable to store the state of the checkbox
 
     const dispatch = createEventDispatcher();
 
@@ -49,9 +49,15 @@
             hours: JSON.parse(restaurant[8]),
             favorite: favoriteRestaurantIds.includes(restaurant[0]) // Set favorite status
         }));
-		console.log("max search results:", searchResults);
 
-		setSearchResults(searchResults); // Update the store
+        // Filter by favourites if the checkbox is checked
+        const filteredResults = showFavourites
+            ? searchResults.filter(restaurant => restaurant.favorite)
+            : searchResults;
+
+		console.log("max search results:", filteredResults);
+
+		setSearchResults(filteredResults); // Update the store with filtered results
     }
 </script>
 
@@ -89,6 +95,11 @@
         <SearchButton pill style="height: 42px" class="!p-2.5 rounded-s-none bg-[#4C8C2B] text-white" on:click={handleSearch}>
             <SearchOutline class="w-6 h-6" />
         </SearchButton>
+        <!-- Add Checkbox for Favourites -->
+        <div class="flex items-center ml-2">
+            <Checkbox id="favourites-checkbox" bind:checked={showFavourites} />
+            <label for="favourites-checkbox" class="ml-1 text-sm text-gray-700">Favourites</label>
+        </div>
     </form>
     <div class="flex md:order-2">
         {#if data.user}
