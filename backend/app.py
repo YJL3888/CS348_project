@@ -123,6 +123,20 @@ def get_review(restaurant_id):
             cursor.execute('SELECT * FROM Reviews WHERE restaurant_id=%s', (restaurant_id,))
             reviews = cursor.fetchall()
             return reviews
+        
+@app.get('/recommendations')
+def get_recommendations():
+    with create_connection() as connection:
+        with connection.cursor(dictionary=True) as cursor:
+            cursor.execute('''
+                SELECT restaurant_id, AVG(rating) as avg_rating
+                FROM Reviews
+                GROUP BY restaurant_id
+                ORDER BY avg_rating DESC
+                LIMIT 10
+            ''')
+            recs = cursor.fetchall()
+            return recs
 
 
 if __name__ == '__main__':
