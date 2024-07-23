@@ -26,6 +26,6 @@ export default {
 			}
 		}
 	},
-
+	darkMode: 'selector',
 	plugins: [flowbitePlugin, typographyPlugin]
 } satisfies Config;
