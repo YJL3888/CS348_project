@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, abort
 from db_util import create_connection
 from flask_jwt_extended import jwt_required, current_user
 
@@ -37,6 +37,20 @@ def get_menu(restaurant_id):
             rows = cursor.fetchall()
             menu = [{'name': row[0], 'price': row[1]} for row in rows]
             return menu
+
+
+@bp.get('/restaurants/<int:restaurant_id>')
+def get_restaurant(restaurant_id):
+    with create_connection() as conn:
+        with conn.cursor(prepared=True, dictionary=True) as cursor:
+            cursor.execute("SELECT * FROM Restaurants WHERE restaurant_id=%s", (restaurant_id,))
+            if not (restaurant := cursor.fetchone()):
+                abort(404)
+            cursor.execute("SELECT * FROM Items WHERE restaurant_id=%s", (restaurant_id,))
+            restaurant['menu'] = cursor.fetchall()
+            cursor.execute("SELECT * FROM Reviews WHERE restaurant_id=%s", (restaurant_id,))
+            restaurant['reviews'] = cursor.fetchall()
+            return restaurant
 
 
 @bp.get('/search_restaurants')
