@@ -105,7 +105,13 @@ def get_recommendations():
     with create_connection() as connection:
         with connection.cursor(dictionary=True) as cursor:
             cursor.execute('''
-                SELECT Restaurants.* FROM Restaurants
+                SELECT 
+                    Restaurants.*,
+                    CASE WHEN MAX(Discount.discount) IS NOT NULL THEN true ELSE false END as discount,
+                    COUNT(Reviews.review_id) as review_count,
+                    AVG(Reviews.rating) as average_rating
+                FROM 
+                    Restaurants
                 JOIN (
                     SELECT restaurant_id
                     FROM Reviews
@@ -113,9 +119,14 @@ def get_recommendations():
                     ORDER BY AVG(rating) DESC
                     LIMIT 10
                 ) AS TopRestaurants ON Restaurants.restaurant_id = TopRestaurants.restaurant_id
+                LEFT JOIN 
+                    Discount ON Restaurants.restaurant_id = Discount.restaurant_id
+                LEFT JOIN 
+                    Reviews ON Restaurants.restaurant_id = Reviews.restaurant_id
+                GROUP BY 
+                    Restaurants.restaurant_id
             ''')
             recs = cursor.fetchall()
             return recs
-
 if __name__ == '__main__':
     app.run()

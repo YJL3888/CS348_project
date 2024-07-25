@@ -33,6 +33,9 @@
             type: restaurant.cuisine,
             price_range: restaurant.price_range,
             hours: JSON.parse(restaurant.hours_range),
+			has_discount: restaurant.discount,
+			review_count: restaurant.review_count,
+			rating: restaurant.average_rating,
             favorite: favoriteRestaurantIds.includes(restaurant.restaurant_id)
         }));
         setSearchResults(formattedRecommendations);
