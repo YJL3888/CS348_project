@@ -21,7 +21,7 @@
 		return {
 			id: review.review_id,
 			user: {
-				name: 'Anonymous',
+				name: review.username,
 				img: {
 					src: '/images/goose.png', // Placeholder image, replace with actual user images if available
 					alt: 'User profile image'
