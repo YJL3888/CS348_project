@@ -6,7 +6,7 @@ from flask_cors import CORS
 import secrets
 from flask_jwt_extended import create_access_token, current_user, JWTManager, jwt_required
 import operator
-from datetime import datetime
+from datetime import datetime, timedelta
 from db_util import create_connection, hash_password
 import restaurants
 import password_reset
@@ -15,6 +15,7 @@ import password_reset
 app = Flask(__name__)
 CORS(app, origins=os.environ['CORS_ORIGINS'])
 app.config['JWT_SECRET_KEY'] = secrets.token_hex(64)
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 jwt = JWTManager(app)
 app.register_blueprint(restaurants.bp)
 app.register_blueprint(password_reset.bp)
