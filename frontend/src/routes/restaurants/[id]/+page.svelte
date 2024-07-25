@@ -20,7 +20,6 @@
 	} from 'flowbite-svelte';
 	import { DotsHorizontalOutline, MessageDotsOutline } from 'flowbite-svelte-icons';
 	import CommentItem from '$lib/CommentItem.svelte';
-	import Error from '../../+error.svelte';
 
 	export let data: PageData;
 
@@ -176,8 +175,8 @@
 					articleClass={i !== 0 ? 'border-t border-gray-200 dark:border-gray-700 rounded-none' : ''}
 				>
 					<svelte:fragment slot="dropdownMenu">
-						<DotsHorizontalOutline class="dots-menu dark:text-white" />
-						<Dropdown triggeredBy=".dots-menu">
+						<DotsHorizontalOutline class={`dots-menu-${comment.id} dark:text-white`} />
+						<Dropdown triggeredBy={".dots-menu-" + comment.id}>
 							<DropdownItem>Edit</DropdownItem>
 							<DropdownItem>Remove</DropdownItem>
 							<DropdownItem>Report</DropdownItem>
@@ -228,6 +227,9 @@
 						{/if}
 					</svelte:fragment>
 				</CommentItem>
+                {#each comment.replies as reply}
+                    <CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false} />
+                {/each}
 			{/each}
 		</TabItem>
 	</Tabs>
