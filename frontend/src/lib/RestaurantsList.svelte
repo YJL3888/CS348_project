@@ -128,7 +128,7 @@
 
 {#if results.length > 0}
 	<div class="restaurant-list">
-		{#each $paginatedResults as restaurant}
+		{#each paginatedResults as restaurant}
 			<RestaurantCard {restaurant} {toggleFavorite} {toggleMenu} {toggleHover} {data} />
 		{/each}
 	</div>
@@ -148,7 +148,7 @@
 			pill
 			class="flex items-center"
 			on:click={nextPage}
-			disabled={$currentPage === $totalPages}
+			disabled={$currentPage === totalPages}
 		>
 			Next
 			<ArrowRightOutline class="ms-2 h-3.5 w-3.5" />
