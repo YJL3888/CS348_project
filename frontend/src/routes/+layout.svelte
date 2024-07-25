@@ -91,7 +91,7 @@
 		<span class="font-sans text-xl font-semibold text-[#4C8C2B]">GooseGooseGo</span>
 	</NavBrand>
 	<!-- Search Bar -->
-	<form class="mr-6 flex w-2/5 justify-start">
+	<form class="mr-6 flex w-2/5 justify-start" on:submit|preventDefault={handleSearch}>
 		<div class="relative">
 			<SearchButton pill class="whitespace-nowrap rounded-e-none border border-e-0 bg-[#4C8C2B]">
 				{selectCategory}
@@ -120,7 +120,7 @@
 			pill
 			style="height: 42px"
 			class="rounded-s-none bg-[#4C8C2B] !p-2.5 text-white"
-			on:click={handleSearch}
+			type="submit"
 		>
 			<SearchOutline class="h-6 w-6" />
 		</SearchButton>
