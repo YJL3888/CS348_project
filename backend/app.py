@@ -138,6 +138,5 @@ def get_recommendations():
             recs = cursor.fetchall()
             return recs
 
-
 if __name__ == '__main__':
     app.run()
