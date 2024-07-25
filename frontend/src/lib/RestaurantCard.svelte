@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Card, Rating, Badge } from 'flowbite-svelte';
+	import { Card, Rating, Badge, P } from 'flowbite-svelte';
 	import { HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
 	import type { PageData } from '../routes/$types';
 	export let restaurant: {
@@ -58,10 +58,10 @@
 			total={5}
 			rating={restaurant.rating !== null && restaurant.rating !== undefined ? restaurant.rating : 0}
 		>
-			<p slot="text" class="ms-2 text-sm font-medium text-black">
+			<P slot="text" class="ms-2 text-sm font-medium text-black">
                 {restaurant.rating ? (+restaurant.rating).toFixed(2): 'N/A'}
-				<span class="text-gray-600">({restaurant.review_count} reviews)</span>
-			</p>
+				<span class="text-gray-600 dark:text-white">({restaurant.review_count} reviews)</span>
+            </P>
 		</Rating>
 		<div class="flex items-center justify-between">
 			<div class="flex items-center space-x-2">

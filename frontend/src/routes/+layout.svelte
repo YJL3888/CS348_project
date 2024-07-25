@@ -26,6 +26,7 @@
 	import { SearchOutline, ChevronDownOutline } from 'flowbite-svelte-icons';
 	import { createEventDispatcher } from 'svelte';
 	import { searchResults, setSearchResults } from '../stores/searchStore';
+	import { Footer, FooterCopyright, FooterLinkGroup, FooterBrand, FooterLink } from 'flowbite-svelte'; 
 
 	export let data: LayoutData;
 
@@ -47,7 +48,12 @@
 
 		let favoriteRestaurantIds = [];
 		if (data.user && data.user.sub) {
-			const favoritesResponse = await fetch('/api/favorites');
+			const favoritesResponse = await fetch('/api/favorites', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+			});
 			favoriteRestaurantIds = await favoritesResponse.json();
 		}
 
@@ -79,7 +85,7 @@
 </script>
 
 <!-- Header -->
-<Navbar rounded color="form">
+<Navbar rounded color="form" class="px-2 sm:px-4 py-2.5 sticky w-full z-20 top-0 start-0">
 	<NavBrand href="/">
 		<img
 			src="https://i.imgur.com/u7ESt9S.png"
@@ -160,10 +166,28 @@
 <div class="mx-48">
 	<br />
 	<slot></slot>
-</div>
+</div>	
+
+<!-- Footer -->
+<footer class="mt-auto flex items-center justify-center py-4 bg-gray-100 dark:bg-gray-800">
+    <Footer>
+        <div class="flex justify-center items-center">
+            <FooterCopyright href="/" by="GooseGooseGuys." year={2024} />
+        </div>
+    </Footer>
+</footer>
+
 
 <style lang="postcss">
-	:global(body) {
-		@apply min-h-screen bg-white dark:bg-gray-900;
-	}
+    :global(body) {
+        @apply min-h-screen flex flex-col bg-white dark:bg-gray-900;
+    }
+
+    :global(#app) {
+        @apply flex flex-col min-h-screen;
+    }
+
+    :global(main) {
+        @apply flex flex-col flex-grow;
+    }
 </style>
