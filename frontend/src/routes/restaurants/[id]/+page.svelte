@@ -26,7 +26,7 @@
 					src: '/images/goose.png', // Placeholder image, replace with actual user images if available
 					alt: 'User profile image'
 				},
-				joined: 'Verified User' // Placeholder, replace with actual user joined date if available
+				joined: new Date(review.timestamp).toLocaleString() // Placeholder, replace with actual user joined date if available
 			},
 			total: 5,
 			rating: review.rating
