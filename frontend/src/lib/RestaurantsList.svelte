@@ -20,6 +20,8 @@
         rating: number;
         hours: { [key: string]: string };
         price_range: number;
+        discountAvailable: boolean;
+		reviewsCount: number;
         hover?: boolean;
         favorite?: boolean;
     };
@@ -129,13 +131,13 @@ async function toggleMenu(restaurant: Restaurant): Promise<void> {
         display: flex;
         flex-direction: column;
 		align-items: center;
-        gap: 16px; /* Adjust this value to set the padding between cards */
+        gap: 16px; 
     }
 
     .pagination-controls {
         display: flex;
         justify-content: space-around;
-        margin-top: 20px; /* Adjust this value to set the margin from the restaurant cards */
+        margin-top: 20px; 
     }
 </style>
 

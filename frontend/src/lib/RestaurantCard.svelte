@@ -13,6 +13,8 @@
 		rating: number;
 		hours: { [key: string]: string };
 		price_range: number;
+		discountAvailable: boolean;
+		reviewsCount: number;
 		hover?: boolean;
 		favorite?: boolean;
 	};
@@ -27,34 +29,43 @@
 </script>
 
 <Card href="/" horizontal size="lg" class="relative">
-	{#if data?.user?.sub}
-	<button
-		type="button"
-		class="absolute top-4 right-4"
-		on:click={() => toggleFavorite(restaurant.id)}
-		on:mouseenter={() => isHovering = true}
-		on:mouseleave={() => isHovering = false}
-		aria-label={restaurant.favorite ? 'Remove from favorites' : 'Add to favorites'}
-		style="pointer-events: auto;"
-	>
-		{#if restaurant.favorite || isHovering}
-			<HeartSolid class="text-red-500" />
-		{:else}
-			<HeartOutline class="text-red-500" />
-		{/if}
-	</button>
-	{/if}
-	<div style="pointer-events: none;">
-		<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{restaurant.name}</h5>
-        <Rating id="example-3" total={5} rating={3.4}>
+    {#if data?.user?.sub}
+    <button
+        type="button"
+        class="absolute top-4 right-4"
+        on:click={() => toggleFavorite(restaurant.id)}
+        on:mouseenter={() => isHovering = true}
+        on:mouseleave={() => isHovering = false}
+        aria-label={restaurant.favorite ? 'Remove from favorites' : 'Add to favorites'}
+        style="pointer-events: auto;"
+    >
+        {#if restaurant.favorite || isHovering}
+            <HeartSolid class="text-red-500" />
+        {:else}
+            <HeartOutline class="text-red-500" />
+        {/if}
+    </button>
+    {/if}
+    <div style="pointer-events: none;">
+        <div class="flex items-center justify-between mb-2 space-x-4">
+            <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{restaurant.name}</h5>
+        </div>
+        <Rating class="mb-2" id="example-3" total={5} rating={3.4}>
             <p slot="text" class="text-sm font-medium text-black ms-2">
                 3.4 
                 <span class="text-gray-600">(12 reviews)</span>
-              </p>        
+            </p>        
         </Rating>
-        <div class="flex items-center space-x-2">
-			<Badge color="green">{Array(restaurant.price_range).fill('$').join('')}</Badge>
-			<Badge color="red">{restaurant.type}</Badge>
-		</div>
-	</div>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <Badge rounded border color="red">{Array(restaurant.price_range).fill('$').join('')}</Badge>
+                <Badge rounded border>{restaurant.type}</Badge>
+            </div>
+        </div>
+    </div>
+    <!-- {#if restaurant.discountAvailable} -->
+    <div class="absolute bottom-4 right-4">
+        <Badge rounded border color="green">{'Discount available!'}</Badge>
+    </div>
+    <!-- {/if} -->
 </Card>
