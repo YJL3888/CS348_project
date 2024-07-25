@@ -25,10 +25,24 @@
 	export let toggleMenu: (restaurant: typeof restaurant) => void;
 	export let toggleHover: (restaurantId: number, isHovering: boolean) => void;
 	export let data: PageData;
-	console.log('WTF',restaurant.rating);
+
+	function handleCardClick(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		const currentTarget = event.currentTarget as HTMLElement;
+
+		if (!currentTarget.contains(target.closest('button'))) {
+			location.href = `/restaurants/${restaurant.id}`;
+		}
+	}
 </script>
 
-<Card href="/" horizontal size="lg" class="relative">
+<Card
+	href={"/"}
+	horizontal
+	size="lg"
+	class="relative"
+	on:click={handleCardClick}
+>
 	{#if data?.user?.sub}
 		<button
 			type="button"
@@ -59,13 +73,13 @@
 			rating={restaurant.rating !== null && restaurant.rating !== undefined ? restaurant.rating : 0}
 		>
 			<P slot="text" class="ms-2 text-sm font-medium text-black">
-                {restaurant.rating ? (+restaurant.rating).toFixed(2): 'N/A'}
+				{restaurant.rating ? (+restaurant.rating).toFixed(2) : 'N/A'}
 				<span class="text-gray-600 dark:text-white">({restaurant.review_count} reviews)</span>
-            </P>
+			</P>
 		</Rating>
 		<div class="flex items-center justify-between">
 			<div class="flex items-center space-x-2">
-                <Badge rounded border color="red">{'$'.repeat(restaurant.price_range)}</Badge>
+				<Badge rounded border color="red">{'$'.repeat(restaurant.price_range)}</Badge>
 				<Badge rounded border>{restaurant.type}</Badge>
 			</div>
 		</div>
