@@ -48,7 +48,7 @@ def get_restaurant(restaurant_id):
                 abort(404)
             cursor.execute("SELECT * FROM Items WHERE restaurant_id=%s", (restaurant_id,))
             restaurant['menu'] = cursor.fetchall()
-            cursor.execute("SELECT * FROM Reviews WHERE restaurant_id=%s", (restaurant_id,))
+            cursor.execute("SELECT * FROM Reviews NATURAL JOIN Users WHERE restaurant_id=%s", (restaurant_id,))
             restaurant['reviews'] = cursor.fetchall()
             return restaurant
 
