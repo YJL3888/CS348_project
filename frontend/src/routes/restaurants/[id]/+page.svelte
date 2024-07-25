@@ -73,6 +73,7 @@
 			).push(adjustedComment);
 			lookup.set(comment.comment_id, adjustedComment);
 		}
+        for (const comment of newComments) comment.replies.reverse();
 		comments = newComments.reverse();
 	}
 
@@ -232,7 +233,16 @@
 					</svelte:fragment>
 				</CommentItem>
 				{#each comment.replies as reply}
-					<CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false} />
+					<CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false}>
+                        <svelte:fragment slot="dropdownMenu">
+                            {#if data.user?.sub === reply.commenter.id}
+                                <DotsHorizontalOutline class={`dots-menu-${comment.id} dark:text-white`} />
+                                <Dropdown triggeredBy={'.dots-menu-' + comment.id}>
+                                    <DropdownItem>Delete</DropdownItem>
+                                </Dropdown>
+                            {/if}
+                        </svelte:fragment>
+                    </CommentItem>
 				{/each}
 			{/each}
 		</TabItem>
