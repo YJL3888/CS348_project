@@ -48,7 +48,7 @@
 		{comment.content}
 	</p>
 	{#if replyButton}
-		<slot name="reply">
+		<slot name="reply" {comment}>
 			<div class="mt-4 flex items-center space-x-4">
 				<button
 					type="button"
@@ -63,6 +63,6 @@
 </article>
 {#if comment.replies}
 	{#each comment.replies as reply}
-		<CommentItem comment={reply} articleClass="ml-6 lg:ml-12" />
+		<CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false} />
 	{/each}
 {/if}

@@ -48,9 +48,25 @@ def get_restaurant(restaurant_id):
                 abort(404)
             cursor.execute("SELECT * FROM Items WHERE restaurant_id=%s", (restaurant_id,))
             restaurant['menu'] = cursor.fetchall()
-            cursor.execute("SELECT * FROM Reviews NATURAL JOIN Users WHERE restaurant_id=%s", (restaurant_id,))
+            cursor.execute("SELECT * FROM Reviews NATURAL JOIN Users WHERE restaurant_id=%s ORDER BY `timestamp` DESC", (restaurant_id,))
             restaurant['reviews'] = cursor.fetchall()
+            cursor.execute('SELECT * FROM Comments NATURAL JOIN Users WHERE restaurant_id=%s AND deleted=0 ORDER BY posted_time', (restaurant_id,))
+            restaurant['comments'] = cursor.fetchall()
             return restaurant
+
+
+@bp.post('/restaurants/comment')
+@jwt_required()
+def comment_on_restaurant():
+    with create_connection() as connection:
+        with connection.cursor(prepared=True, dictionary=True) as cursor:
+            cursor.execute('''
+            INSERT INTO Comments(content, restaurant_id, user_id, parent_comment_id) VALUES(%s, %s, %s, %s)
+            ''', (request.form['content'], request.form['restaurant_id'],
+                  current_user['user_id'], request.form.get('parent_comment_id')))
+            connection.commit()
+            cursor.execute('SELECT * FROM Comments NATURAL JOIN Users WHERE comment_id=%s', (cursor.lastrowid,))
+            return cursor.fetchone()
 
 
 @bp.get('/search_restaurants')

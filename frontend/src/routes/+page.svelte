@@ -51,7 +51,8 @@
 		}
 	});
 
-	// Subscribe to search results (to display h1 if no results)
+
+	// subscribes to search results (to display h1 if no results)
 	searchResults.subscribe((value) => {
 		results = value;
 		if (value.length > 0) {
@@ -65,7 +66,7 @@
 	<h1 class="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
 		Welcome to GooseGooseGo! Search a restaurant to get started!
 	</h1>
-	<p class="text-gray-600 dark:text-gray-400 mb-8">
+	<p class="mb-8 text-gray-600 dark:text-gray-400">
 		Here are some top rated GooseGooseGo recommendations to get you started:
 	</p>
 {/if}
@@ -75,6 +76,6 @@
 		{#if !fresh && results.length !== 0}
 			<h1 class="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">Search Results</h1>
 		{/if}
-		<RestaurantsList {results} {data} />
+		<RestaurantsList {results} {data} hidePagination={fresh} />
 	</div>
 </div>
