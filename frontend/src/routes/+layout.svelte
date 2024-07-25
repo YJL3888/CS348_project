@@ -84,7 +84,7 @@
 </script>
 
 <!-- Header -->
-<Navbar rounded color="form">
+<Navbar rounded color="form" class="px-2 sm:px-4 py-2.5 fixed w-full z-20 top-0 start-0">
 	<NavBrand href="/">
 		<img
 			src="https://i.imgur.com/u7ESt9S.png"

@@ -58,7 +58,7 @@
 	
 {/if}
 
-<div class="flex h-full w-full">
+<div class="flex h-full w-full pt-16">
 	<div class="flex-1">
 		{#if !fresh && results.length !== 0}
 			<h1 class="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">Search Results</h1>
