@@ -14,7 +14,8 @@
 		DropdownItem,
 		DropdownDivider,
 		Checkbox,
-		DarkMode
+		DarkMode,
+		P,
 	} from 'flowbite-svelte';
 	import {
 		Search,
