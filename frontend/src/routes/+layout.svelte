@@ -48,9 +48,7 @@
 
 		let favoriteRestaurantIds = [];
 		if (data.user && data.user.sub) {
-			const favoritesResponse = await fetch(
-				`http://localhost:5000/favorites?user_id=${data.user.sub}`
-			);
+			const favoritesResponse = await fetch('/api/favorites');
 			favoriteRestaurantIds = await favoritesResponse.json();
 		}
 
