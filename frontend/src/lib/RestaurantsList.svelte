@@ -4,10 +4,8 @@
     import { currentPage } from '../stores/paginationStore';
     import { PaginationItem } from 'flowbite-svelte';
     import { ArrowLeftOutline, ArrowRightOutline } from 'flowbite-svelte-icons';
-    import { derived } from 'svelte/store';
-	import type { PageData } from '../routes/$types';
-	import { writable } from 'svelte/store';
-	import { PUBLIC_BACKEND_BASE } from '$env/static/public';
+    import { writable } from 'svelte/store';
+    import { PUBLIC_BACKEND_BASE } from '$env/static/public';
 
     type Restaurant = {
         id: number;
@@ -21,7 +19,7 @@
         hours: { [key: string]: string };
         price_range: number;
         discountAvailable: boolean;
-		reviewsCount: number;
+        reviewsCount: number;
         hover?: boolean;
         favorite?: boolean;
     };
@@ -36,32 +34,32 @@
     export let data: PageData; // Assuming user data is passed to this component
 
     async function fetchMenu(restaurantId: number): Promise<void> {
-    const response = await fetch(PUBLIC_BACKEND_BASE + `/restaurants/${restaurantId}/menu`);
-    if (!response.ok) {
-        console.error(`Failed to fetch menu: ${response.statusText}`);
-        return;
-    }
-    const newData = await response.json();
-    menu.update(currentMenu => {
-        currentMenu[restaurantId] = newData;
-        return currentMenu;
-    });
-}
-
-async function toggleMenu(restaurant: Restaurant): Promise<void> {
-    menu.update(currentMenu => {
-        if (currentMenu[restaurant.id]) {
-            const { [restaurant.id]: _, ...rest } = currentMenu;
-            return rest;
-        } else {
-            return currentMenu;
+        const response = await fetch(PUBLIC_BACKEND_BASE + `/restaurants/${restaurantId}/menu`);
+        if (!response.ok) {
+            console.error(`Failed to fetch menu: ${response.statusText}`);
+            return;
         }
-    });
-
-    if (!(await $menu)[restaurant.id]) {
-        await fetchMenu(restaurant.id);
+        const newData = await response.json();
+        menu.update(currentMenu => {
+            currentMenu[restaurantId] = newData;
+            return currentMenu;
+        });
     }
-}
+
+    async function toggleMenu(restaurant: Restaurant): Promise<void> {
+        menu.update(currentMenu => {
+            if (currentMenu[restaurant.id]) {
+                const { [restaurant.id]: _, ...rest } = currentMenu;
+                return rest;
+            } else {
+                return currentMenu;
+            }
+        });
+
+        if (!(await $menu)[restaurant.id]) {
+            await fetchMenu(restaurant.id);
+        }
+    }
 
     function toggleHover(restaurantId: number, isHovering: boolean) {
         const restaurantIndex = results.findIndex((r) => r.id === restaurantId);
@@ -100,14 +98,16 @@ async function toggleMenu(restaurant: Restaurant): Promise<void> {
     });
 
     // Pagination logic
-    const itemsPerPage = 10;
-    const totalPages = derived([searchResults], ([$searchResults]) => Math.ceil($searchResults.length / itemsPerPage));
+    let itemsPerPage = 10;
+    let totalPages = 0;
+    $: totalPages = Math.ceil(results.length / itemsPerPage);
 
-    const paginatedResults = derived([searchResults, currentPage], ([$searchResults, $currentPage]) => {
+    let paginatedResults = [];
+    $: {
         const start = ($currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
-        return $searchResults.slice(start, end);
-    });
+        paginatedResults = results.slice(start, end);
+    }
 
     function setPage(page: number) {
         currentPage.set(page);
@@ -120,7 +120,7 @@ async function toggleMenu(restaurant: Restaurant): Promise<void> {
     }
 
     function nextPage() {
-        if ($currentPage < $totalPages) {
+        if ($currentPage < totalPages) {
             setPage($currentPage + 1);
         }
     }
@@ -130,7 +130,7 @@ async function toggleMenu(restaurant: Restaurant): Promise<void> {
     .restaurant-list {
         display: flex;
         flex-direction: column;
-		align-items: center;
+        align-items: center;
         gap: 16px; 
     }
 
@@ -143,7 +143,7 @@ async function toggleMenu(restaurant: Restaurant): Promise<void> {
 
 {#if results.length > 0}
     <div class="restaurant-list">
-        {#each $paginatedResults as restaurant}
+        {#each paginatedResults as restaurant}
             <RestaurantCard {restaurant} {toggleFavorite} {toggleMenu} {toggleHover} {data}/>
         {/each}
     </div>
@@ -154,7 +154,7 @@ async function toggleMenu(restaurant: Restaurant): Promise<void> {
             <ArrowLeftOutline class="me-2 w-3.5 h-3.5" />
             Previous
         </PaginationItem>
-        <PaginationItem pill class="flex items-center" on:click={nextPage} disabled={$currentPage === $totalPages}>
+        <PaginationItem pill class="flex items-center" on:click={nextPage} disabled={$currentPage === totalPages}>
             Next
             <ArrowRightOutline class="ms-2 w-3.5 h-3.5" />
         </PaginationItem>

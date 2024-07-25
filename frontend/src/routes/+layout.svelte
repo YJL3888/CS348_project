@@ -62,7 +62,7 @@
 			contact: restaurant[4],
 			website: restaurant[5],
 			type: restaurant[6],
-			price_range: restaurant[9],
+			price_range: restaurant[7],
 			hours: JSON.parse(restaurant[8]),
 			favorite: favoriteRestaurantIds.includes(restaurant[0]) // Set favorite status
 		}));

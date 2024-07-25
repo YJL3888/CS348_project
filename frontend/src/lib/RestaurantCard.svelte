@@ -58,7 +58,7 @@
         </Rating>
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-                <Badge rounded border color="red">{Array(restaurant.price_range).fill('$').join('')}</Badge>
+                <Badge rounded border color="red">{'$'.repeat(restaurant.price_range)}</Badge>
                 <Badge rounded border>{restaurant.type}</Badge>
             </div>
         </div>
