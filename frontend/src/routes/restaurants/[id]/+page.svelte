@@ -47,7 +47,7 @@
 	<p class="mb-6 text-lg text-gray-700 dark:text-gray-300">{restaurant.description}</p>
 
 	<h2 class="mb-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">Menu</h2>
-	<Table>
+	<Table hoverable={true}>
 		<TableHead>
 			<TableHeadCell>Item Name</TableHeadCell>
 			<TableHeadCell>Price</TableHeadCell>
@@ -65,10 +65,11 @@
 	<h2 class="mb-4 mt-8 text-2xl font-semibold text-gray-900 dark:text-gray-100">Reviews</h2>
 	{#if restaurant.reviews.length > 0}
 		{#each restaurant.reviews as review}
-			<RatingComment comment={formatReview(review)}>
-				<p class="mb-2 font-light text-gray-500 dark:text-gray-400">{review.comments}</p>
-				<svelte:fragment slot="evaluation">{review.rating} stars</svelte:fragment>
-			</RatingComment>
+			<div class="mb-8">
+				<RatingComment comment={formatReview(review)}>
+					<p class="mb-2 font-light text-gray-500 dark:text-gray-400">{review.comments}</p>
+				</RatingComment>
+			</div>
 		{/each}
 	{:else}
 		<p class="text-gray-700 dark:text-gray-300">No reviews yet. Be the first to leave a review!</p>
