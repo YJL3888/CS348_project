@@ -61,8 +61,3 @@
 		</slot>
 	{/if}
 </article>
-{#if comment.replies}
-	{#each comment.replies as reply}
-		<CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false} />
-	{/each}
-{/if}
