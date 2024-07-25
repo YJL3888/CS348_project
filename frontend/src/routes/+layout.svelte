@@ -48,7 +48,12 @@
 
 		let favoriteRestaurantIds = [];
 		if (data.user && data.user.sub) {
-			const favoritesResponse = await fetch('/api/favorites');
+			const favoritesResponse = await fetch('/api/favorites', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+			});
 			favoriteRestaurantIds = await favoritesResponse.json();
 		}
 

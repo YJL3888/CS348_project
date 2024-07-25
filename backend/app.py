@@ -105,15 +105,17 @@ def get_recommendations():
     with create_connection() as connection:
         with connection.cursor(dictionary=True) as cursor:
             cursor.execute('''
-                SELECT restaurant_id, AVG(rating) as avg_rating
-                FROM Reviews
-                GROUP BY restaurant_id
-                ORDER BY avg_rating DESC
-                LIMIT 10
+                SELECT Restaurants.* FROM Restaurants
+                JOIN (
+                    SELECT restaurant_id
+                    FROM Reviews
+                    GROUP BY restaurant_id
+                    ORDER BY AVG(rating) DESC
+                    LIMIT 10
+                ) AS TopRestaurants ON Restaurants.restaurant_id = TopRestaurants.restaurant_id
             ''')
             recs = cursor.fetchall()
             return recs
-
 
 if __name__ == '__main__':
     app.run()

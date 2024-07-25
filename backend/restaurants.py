@@ -98,7 +98,7 @@ def toggle_favorites():
             return {'message': f'Restaurant {action} favorites successfully'}, 200
 
 
-@bp.get('/favorites')
+@bp.post('/favorites')
 @jwt_required()
 def get_favorites():
     query = "SELECT restaurant_id FROM Favorites WHERE user_id = %s"
