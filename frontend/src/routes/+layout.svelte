@@ -38,7 +38,6 @@
 	const dispatch = createEventDispatcher();
 
 	async function handleSearch() {
-		console.log('max handleSearch triggered');
 		const searchFields =
 			selectCategory === 'All categories' ? ['name', 'cuisine'] : [selectCategory.toLowerCase()];
 		const params = new URLSearchParams({
@@ -64,8 +63,11 @@
 			contact: restaurant[4],
 			website: restaurant[5],
 			type: restaurant[6],
-			price_range: restaurant[9],
+			price_range: restaurant[7],
 			hours: JSON.parse(restaurant[8]),
+			has_discount: restaurant[9],
+			review_count: restaurant[10],
+			rating: restaurant[11],
 			favorite: favoriteRestaurantIds.includes(restaurant[0]) // Set favorite status
 		}));
 
@@ -73,8 +75,6 @@
 		const filteredResults = showFavourites
 			? searchResults.filter((restaurant) => restaurant.favorite)
 			: searchResults;
-
-		console.log('max search results:', filteredResults);
 
 		setSearchResults(filteredResults); // Update the store with filtered results
 	}
