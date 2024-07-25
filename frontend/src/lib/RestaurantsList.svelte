@@ -30,6 +30,7 @@
 	};
 
 	export let results: Restaurant[] = [];
+	export let hidePagination = false; // New prop to control pagination visibility
 	let menu = writable<{ [key: number]: MenuItem[] }>({});
 	export let data: PageData; // Assuming user data is passed to this component
 
@@ -134,26 +135,28 @@
 	</div>
 
 	<!-- Pagination Controls -->
-	<div class="pagination-controls mb-10 mt-10">
-		<PaginationItem
-			pill
-			class="mr-20 flex items-center"
-			on:click={previousPage}
-			disabled={$currentPage === 1}
-		>
-			<ArrowLeftOutline class="me-2 h-3.5 w-3.5" />
-			Previous
-		</PaginationItem>
-		<PaginationItem
-			pill
-			class="flex items-center"
-			on:click={nextPage}
-			disabled={$currentPage === totalPages}
-		>
-			Next
-			<ArrowRightOutline class="ms-2 h-3.5 w-3.5" />
-		</PaginationItem>
-	</div>
+	{#if !hidePagination}
+		<div class="pagination-controls mb-10 mt-10">
+			<PaginationItem
+				pill
+				class="mr-20 flex items-center"
+				on:click={previousPage}
+				disabled={$currentPage === 1}
+			>
+				<ArrowLeftOutline class="me-2 h-3.5 w-3.5" />
+				Previous
+			</PaginationItem>
+			<PaginationItem
+				pill
+				class="flex items-center"
+				on:click={nextPage}
+				disabled={$currentPage === totalPages}
+			>
+				Next
+				<ArrowRightOutline class="ms-2 h-3.5 w-3.5" />
+			</PaginationItem>
+		</div>
+	{/if}
 {/if}
 
 <style>
