@@ -58,9 +58,6 @@ def search_restaurants():
     search_query = request.args.get('query', '')
     search_fields = request.args.get('fields', '').split(',')
 
-    if not search_query:
-        return [], 200
-
     if not search_fields:
         return {'error': 'fields are required'}, 400
 
