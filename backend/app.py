@@ -74,30 +74,6 @@ def register():
             })}
 
 
-@app.post('/favorites')
-@jwt_required()
-def add_to_favorites():
-    data = request.get_json()
-    user_id = current_user['user_id']
-    restaurant_id = data['restaurant_id']
-    with create_connection() as connection:
-        with connection.cursor(prepared=True) as cursor:
-            cursor.execute('INSERT INTO Favorites(user_id, restaurant_id) VALUES (%s, %s)', (user_id, restaurant_id))
-            connection.commit()
-            return {'message': 'Restaurant added to favorites'}
-
-
-@app.get('/favorites')
-@jwt_required()
-def get_favorites():
-    user_id = current_user['user_id']
-    with create_connection() as connection:
-        with connection.cursor(prepared=True) as cursor:
-            cursor.execute('SELECT * FROM Favorites WHERE user_id=%s', (user_id,))
-            favs = cursor.fetchall()
-            return favs
-
-
 @app.post('/reviews')
 @jwt_required()
 def add_review():
