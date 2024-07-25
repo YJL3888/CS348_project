@@ -27,6 +27,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { searchResults, setSearchResults } from '../stores/searchStore';
 	import { Footer, FooterCopyright, FooterLinkGroup, FooterBrand, FooterLink } from 'flowbite-svelte'; 
+	import { goto } from '$app/navigation';
 
 	export let data: LayoutData;
 
@@ -81,12 +82,20 @@
 			: searchResults;
 
 		setSearchResults(filteredResults); // Update the store with filtered results
+
+		goto('/');
+	}
+
+	function reloadPage() {
+		goto('/').then(() => {
+			window.location.reload();
+		});
 	}
 </script>
 
 <!-- Header -->
 <Navbar rounded color="form" class="px-2 sm:px-4 py-2.5 sticky w-full z-20 top-0 start-0">
-	<NavBrand href="/">
+	<NavBrand href="/" on:click={reloadPage}>
 		<img
 			src="https://i.imgur.com/u7ESt9S.png"
 			class="ml-2 mr-2 h-16 w-16 rounded-full"
@@ -158,7 +167,7 @@
 		<NavHamburger />
 	</div>
 	<NavUl>
-		<NavLi href="/" class="mr-4">Home</NavLi>
+		<NavLi href="/" class="mr-4" on:click={reloadPage}>Home</NavLi>
 		<NavLi href="/about" class="mr-4">About</NavLi>
 		<NavLi href="/contact-us" class="mr-4">Contact Us</NavLi>
 	</NavUl>
