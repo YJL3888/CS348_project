@@ -60,7 +60,23 @@ def search_restaurants():
         query_parts.append("cuisine LIKE %s")
         params.append(f"%{search_query}%")
 
-    query = "SELECT * FROM Restaurants WHERE " + " OR ".join(query_parts)
+    query = """
+    SELECT 
+        r.*,
+        CASE WHEN MAX(d.discount) IS NOT NULL THEN true ELSE false END as discount,
+        COUNT(rv.review_id) as review_count,
+        AVG(rv.rating) as average_rating
+    FROM 
+        Restaurants r
+    LEFT JOIN 
+        Discount d ON r.restaurant_id = d.restaurant_id
+    LEFT JOIN 
+        Reviews rv ON r.restaurant_id = rv.restaurant_id
+    WHERE 
+        """ + " OR ".join(query_parts) + """
+    GROUP BY 
+        r.restaurant_id
+    """
 
     print("Executing query:", query)
     print("With parameters:", params)
@@ -69,7 +85,7 @@ def search_restaurants():
         with conn.cursor() as cursor:
             cursor.execute(query, params)
             rows = cursor.fetchall()
-            return rows                
+            return rows
 
 
 @bp.post('/favorites/toggle')
