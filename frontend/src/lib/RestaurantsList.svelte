@@ -72,12 +72,12 @@ async function toggleMenu(restaurant: Restaurant): Promise<void> {
 
     async function toggleFavorite(restaurantId: number) {
         try {
-            const response = await fetch(PUBLIC_BACKEND_BASE + '/toggle_favorites', {
+            const response = await fetch('/api/favorites/toggle', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ user_id: data?.user?.sub, restaurant_id: restaurantId })
+                body: JSON.stringify({ restaurant_id: restaurantId })
             });
 
             if (!response.ok) {
