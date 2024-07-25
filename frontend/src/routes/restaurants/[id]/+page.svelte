@@ -53,6 +53,7 @@
 	const adjustComment = (comment) => ({
 		id: comment.comment_id,
 		commenter: {
+            id: comment.user_id,
 			name: comment.username,
 			profilePicture: '/images/goose.png'
 		},
@@ -86,9 +87,9 @@
 				body: new FormData(e.target)
 			});
 			if (!res.ok) {
-                comments_info[id].error = true;
-                return;
-            }
+				comments_info[id].error = true;
+				return;
+			}
 			const data = await res.json();
 			if (~id) {
 				const parIdx = comments.findIndex((c) => c.id === id);
@@ -146,41 +147,44 @@
 			{/if}
 		</TabItem>
 		<TabItem title={'Comments (' + comments.length + ')'}>
-			<form class="mb-6" on:submit|preventDefault={(e) => handleComment(e, -1)}>
-				<Label for="comment" class="sr-only">Your comment</Label>
-				<Textarea
-					id="comment"
-					rows="6"
-					class="mb-4 resize-none"
-					placeholder="Write a comment..."
-					name="content"
-					required
-				></Textarea>
-				<Button type="submit" class="px-4 text-xs font-medium">
-					{#if comments_info[-1]?.submitting}
-						<Spinner class="me-3" size="4" color="white" />
+			{#if data.user}
+				<form class="mb-6" on:submit|preventDefault={(e) => handleComment(e, -1)}>
+					<Label for="comment" class="sr-only">Your comment</Label>
+					<Textarea
+						id="comment"
+						rows="6"
+						class="mb-4 resize-none"
+						placeholder="Write a comment..."
+						name="content"
+						required
+					></Textarea>
+					<Button type="submit" class="px-4 text-xs font-medium">
+						{#if comments_info[-1]?.submitting}
+							<Spinner class="me-3" size="4" color="white" />
+						{/if}
+						Post comment
+					</Button>
+					<input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
+					{#if comments_info[-1]?.error}
+						<p class="text-red-500">
+							An error occurred while posting your comment. Please try again later.
+						</p>
 					{/if}
-					Post comment
-				</Button>
-				<input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
-				{#if comments_info[-1]?.error}
-					<p class="text-red-500">
-						An error occurred while posting your comment. Please try again later.
-					</p>
-				{/if}
-			</form>
+				</form>
+			{/if}
 			{#each comments as comment, i}
 				<CommentItem
 					{comment}
 					articleClass={i !== 0 ? 'border-t border-gray-200 dark:border-gray-700 rounded-none' : ''}
+					replyButton={!!data.user}
 				>
 					<svelte:fragment slot="dropdownMenu">
-						<DotsHorizontalOutline class={`dots-menu-${comment.id} dark:text-white`} />
-						<Dropdown triggeredBy={".dots-menu-" + comment.id}>
-							<DropdownItem>Edit</DropdownItem>
-							<DropdownItem>Remove</DropdownItem>
-							<DropdownItem>Report</DropdownItem>
-						</Dropdown>
+						{#if data.user?.sub === comment.commenter.id}
+							<DotsHorizontalOutline class={`dots-menu-${comment.id} dark:text-white`} />
+							<Dropdown triggeredBy={'.dots-menu-' + comment.id}>
+								<DropdownItem>Delete</DropdownItem>
+							</Dropdown>
+						{/if}
 					</svelte:fragment>
 					<svelte:fragment slot="reply">
 						<div class="mt-4 flex items-center space-x-4">
@@ -227,9 +231,9 @@
 						{/if}
 					</svelte:fragment>
 				</CommentItem>
-                {#each comment.replies as reply}
-                    <CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false} />
-                {/each}
+				{#each comment.replies as reply}
+					<CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false} />
+				{/each}
 			{/each}
 		</TabItem>
 	</Tabs>
