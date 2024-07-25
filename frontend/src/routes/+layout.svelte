@@ -26,6 +26,7 @@
 	import { SearchOutline, ChevronDownOutline } from 'flowbite-svelte-icons';
 	import { createEventDispatcher } from 'svelte';
 	import { searchResults, setSearchResults } from '../stores/searchStore';
+	import { Footer, FooterCopyright, FooterLinkGroup, FooterBrand, FooterLink } from 'flowbite-svelte'; 
 
 	export let data: LayoutData;
 
@@ -91,7 +92,7 @@
 			class="ml-2 mr-2 h-16 w-16 rounded-full"
 			alt="Logo"
 		/>
-		<span class="font-sans text-xl font-semibold text-[#4C8C2B]">GooseGooseGo</span>
+		<P class="font-sans text-xl font-semibold text-[#4C8C2B]">GooseGooseGo</P>
 	</NavBrand>
 	<!-- Search Bar -->
 	<form class="mr-6 flex w-2/5 justify-start" on:submit|preventDefault={handleSearch}>
@@ -130,7 +131,7 @@
 		<!-- Add Checkbox for Favourites -->
 		<div class="ml-2 flex items-center">
 			<Checkbox id="favourites-checkbox" bind:checked={showFavourites} />
-			<label for="favourites-checkbox" class="ml-1 text-sm text-gray-700">Favourites</label>
+			<P for="favourites-checkbox" class="ml-1 text-sm text-gray-700">Favourites</P>
 		</div>
 	</form>
 	<div class="flex md:order-2">
@@ -165,10 +166,28 @@
 <div class="mx-48">
 	<br />
 	<slot></slot>
-</div>
+</div>	
+
+<!-- Footer -->
+<footer class="mt-auto flex items-center justify-center py-4 bg-gray-100 dark:bg-gray-800">
+    <Footer>
+        <div class="flex justify-center items-center">
+            <FooterCopyright href="/" by="GooseGooseGuys." year={2024} />
+        </div>
+    </Footer>
+</footer>
+
 
 <style lang="postcss">
-	:global(body) {
-		@apply min-h-screen bg-white dark:bg-gray-900;
-	}
+    :global(body) {
+        @apply min-h-screen flex flex-col bg-white dark:bg-gray-900;
+    }
+
+    :global(#app) {
+        @apply flex flex-col min-h-screen;
+    }
+
+    :global(main) {
+        @apply flex flex-col flex-grow;
+    }
 </style>

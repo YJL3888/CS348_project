@@ -1,26 +1,8 @@
+<script>
+    import { P } from 'flowbite-svelte';
+</script>
+
 <style>
-	.contact-header {
-		color: #1a202c;
-		text-align: center;
-		margin-top: 20px;
-		font-size: 2em;
-		font-weight: bold;
-	}
-
-	.contact-intro {
-		color: #4a5568;
-		text-align: center;
-		margin: 10px 0 20px 0;
-	}
-
-	.contact-list {
-		list-style-type: none;
-		padding: 0;
-		display: flex;
-		justify-content: center;
-		flex-wrap: wrap;
-	}
-
 	.contact-item {
 		margin: 10px 20px;
 		padding: 15px;
@@ -54,15 +36,15 @@
 	}
 </style>
 
-<h1 class="contact-header">
+<P class="text-gray-900 dark:text-gray-100 text-center mt-5 text-2xl font-bold">
 	Reach out to the dedicated and distinguished GooseGooseGeese team here:
-</h1>
+</P>
 
-<p class="contact-intro">
+<P class="text-gray-700 dark:text-gray-400 text-center my-5">
 	The GooseGooseGeese team is always ready to connect and collaborate. Feel free to reach out to any of our members via email:
-</p>
+</P>
 
-<ul class="contact-list">
+<ul class="list-none p-0 flex justify-center flex-wrap">
 	<li class="contact-item">
 		<strong>Jason Cheng</strong>
 		<a href="mailto:j25cheng@uwaterloo.ca">j25cheng@uwaterloo.ca</a>
