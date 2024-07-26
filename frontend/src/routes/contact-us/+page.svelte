@@ -34,14 +34,18 @@
 	</li>
 </ul>
 
+<div class="flex justify-center mt-10">
+	<img src="/images/goosegooseguys.jpg" alt="GooseGooseGuys" class="w-2/3 rounded-lg shadow-lg">
+</div>
+
 <style>
 	.contact-item {
 		margin: 10px 20px;
 		padding: 15px;
-		border: 2px solid #2f855a;
+		border: 2px solid #508c2c;
 		border-radius: 8px;
 		background-color: #f0fff4;
-		width: 300px;
+		width: 12vw;
 		text-align: center;
 		transition: transform 0.2s ease-in-out;
 	}
@@ -51,7 +55,7 @@
 	}
 
 	.contact-item a {
-		color: #2c7a7b; /* Link color */
+		color: #508c2c;
 		text-decoration: none;
 		font-weight: bold;
 	}
@@ -64,6 +68,6 @@
 		display: block;
 		margin-bottom: 5px;
 		font-size: 1.2em;
-		color: #2f855a; /* Replace with your primary color */
+		color: #508c2c;
 	}
 </style>

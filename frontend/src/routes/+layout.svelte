@@ -116,7 +116,7 @@
 >
 	<NavBrand href="/" on:click={reloadPage}>
 		<img
-			src="https://i.imgur.com/u7ESt9S.png"
+			src="/images/goosegoosego.png"
 			class="ml-2 mr-2 h-16 w-16 rounded-full"
 			alt="Logo"
 		/>

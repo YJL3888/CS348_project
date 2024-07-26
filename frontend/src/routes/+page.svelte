@@ -101,8 +101,8 @@
 	</div>
 	<div class="aspect-ratio-container relative hidden w-full lg:col-span-5 lg:mt-0 lg:flex">
 		<img
-			src="/images/Food.jpg"
-			alt="Food"
+			src="/images/food.jpg"
+			alt="picture of food"
 			class="absolute left-0 top-0 h-full w-full object-cover"
 		/>
 	</div>
