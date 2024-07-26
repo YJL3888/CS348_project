@@ -39,17 +39,11 @@
 
 	function getDiscountedPrice(itemId, originalPrice) {
         const today = new Date().toLocaleString('en-us', { weekday: 'short' }).toLowerCase();
-		if (itemId === 17879) {
-			console.log ("HMMMM");
-		}
 		const applicableDiscounts = restaurant.discounts.filter(
 			(d) =>((d.item_id === itemId || d.item_id === null) && d.weekday === today)
 		);
-		if (applicableDiscounts.length === 0) {
-			console.log ('nuh uh')
+		if (applicableDiscounts.length === 0)
 			return { price: originalPrice, discounted: false };
-		}
-		console.log ("hi");
 		let newPrice = originalPrice;
 		let discounted = false;
 		for (const discount of applicableDiscounts) {
@@ -84,7 +78,24 @@
 	}
 
 	let formModal = false;
-	let selected;
+
+    function sendReview(e) {
+        fetch('/api/review', {
+            method: 'POST',
+            body: new FormData(e.target)
+        }).then(res => {
+            if (res.ok) return res.json();
+            throw Error(res.statusText);
+        }).then(data => {
+            console.log(data);
+            e.target.reset();
+            formModal = false;
+            restaurant.reviews = [data, ...restaurant.reviews];
+        }, err => {
+            console.error(err);
+        });
+    }
+
 	let ratings = [
 		{ value: 1, name: '1' },
 		{ value: 2, name: '2' },
@@ -303,11 +314,11 @@
             {#if data.user}
                 <GradientButton color="pinkToOrange" on:click={() => (formModal = true)}>Write a review!</GradientButton>
                 <Modal bind:open={formModal} size="xs" autoclose={false} outsideclose class="w-full">
-                    <form class="flex flex-col space-y-6">
+                    <form class="flex flex-col space-y-6" on:submit|preventDefault={sendReview}>
                         <h3 class="mb-2 text-xl font-medium text-gray-900 dark:text-white">Leave a review!</h3>
                         <Label class="space-y-2">
                             <span>Select your rating</span>
-                            <Select class="mt-2" items={ratings} bind:value={selected} name="rating" required />
+                            <Select class="mt-2" items={ratings} name="rating" required />
                         </Label>
                         <Label class="space-y-2">
                             <span>Write your review</span>
