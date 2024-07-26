@@ -7,7 +7,7 @@ This project aims to develop a web application for tracking menus, ingredients, 
 For our project, we have decided to use AWS RDS running MySQL in the us-east-1 (N.Virginia) Region. 
 
 ### Connection
-1. To connect to the database, first download MySQL Workbench ```https://www.mysql.com/products/workbench/```
+1. To connect to the database, first download MySQL Workbench <https://www.mysql.com/products/workbench/>
 2. Create a new connection by clicking the '+' sign beside "MySQL Connections"
 3. **Enter Connection Details:**
    - **Hostname:** Enter the RDS endpoint from AWS. You can find this in the AWS Management Console under the RDS instance details. It usually looks like `your-db-instance.c123456789012.us-west-2.rds.amazonaws.com`.
@@ -29,7 +29,7 @@ CREATE TABLE food_items(
     name VARCHAR(255) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     description TEXT
-)
+);
 ```
 Load sample data into the database
 ```sql
@@ -39,7 +39,7 @@ INSERT INTO food_items (name, price, description) VALUES ('Foodie Sushi', 16.00,
 
 The database has been loaded with sample data! You can check it out with
 ```sql
-SELECT * FROM food_items
+SELECT * FROM food_items;
 ```
 
 ### Scrape the Production Database
@@ -87,7 +87,7 @@ python app.py
 Then run the frontend with
 ```sh
 cd frontend
-npm install
+npm i
 npm run dev
 ```
 
