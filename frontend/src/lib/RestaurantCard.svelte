@@ -22,32 +22,20 @@
 	let isHovering = false;
 
 	export let toggleFavorite: (restaurantId: number) => void;
-	export let toggleMenu: (restaurant: typeof restaurant) => void;
-	export let toggleHover: (restaurantId: number, isHovering: boolean) => void;
 	export let data: PageData;
-
-	function handleCardClick(event: MouseEvent) {
-		const target = event.target as HTMLElement;
-		const currentTarget = event.currentTarget as HTMLElement;
-
-		if (!currentTarget.contains(target.closest('button'))) {
-			location.href = `/restaurants/${restaurant.id}`;
-		}
-	}
 </script>
 
 <Card
-	href={"/"}
+	href={"/restaurants/" + restaurant.id}
 	horizontal
 	size="lg"
 	class="relative"
-	on:click={handleCardClick}
 >
 	{#if data?.user?.sub}
 		<button
 			type="button"
 			class="absolute right-4 top-4"
-			on:click={() => toggleFavorite(restaurant.id)}
+			on:click|preventDefault={e => toggleFavorite(restaurant.id)}
 			on:mouseenter={() => (isHovering = true)}
 			on:mouseleave={() => (isHovering = false)}
 			aria-label={restaurant.favorite ? 'Remove from favorites' : 'Add to favorites'}
@@ -86,7 +74,7 @@
 	</div>
 	{#if restaurant.has_discount}
 		<div class="absolute bottom-4 right-4">
-			<Badge rounded border color="green">{'Discount available!'}</Badge>
+			<Badge rounded border color="green">Discount available!</Badge>
 		</div>
 	{/if}
 </Card>
