@@ -12,7 +12,6 @@
 		Dropdown,
 		DropdownHeader,
 		DropdownItem,
-		DropdownDivider,
 		Checkbox,
 		DarkMode,
 		P,
@@ -83,7 +82,11 @@
 
 		setSearchResults(filteredResults); // Update the store with filtered results
 
-		goto('/');
+		goto('/').then(() => {
+			const searchResultsContainer = document.querySelector<HTMLElement>('.search-results-container');
+			if (searchResultsContainer)
+				window.scrollTo(0, searchResultsContainer.offsetTop - document.getElementById('top-nav')!.offsetHeight - 20);
+		});
 	}
 
 	function reloadPage() {
@@ -94,7 +97,7 @@
 </script>
 
 <!-- Header -->
-<Navbar rounded color="form" class="px-2 sm:px-4 py-2.5 sticky w-full z-20 top-0 start-0">
+<Navbar rounded color="form" class="px-2 sm:px-4 py-2.5 sticky w-full z-20 top-0 start-0" id="top-nav">
 	<NavBrand href="/" on:click={reloadPage}>
 		<img
 			src="https://i.imgur.com/u7ESt9S.png"
@@ -128,6 +131,7 @@
 			size="md"
 			class="flex-grow rounded-none py-2.5"
 			placeholder="Search by Name, Cuisine..."
+			id="nav-restaurant-search"
 		/>
 		<SearchButton
 			pill
