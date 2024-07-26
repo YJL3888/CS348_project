@@ -1,6 +1,7 @@
 from flask import Blueprint, request, abort
 from db_util import create_connection
 from flask_jwt_extended import jwt_required, current_user
+from datetime import datetime
 
 bp = Blueprint('restaurants', __name__)
 
@@ -54,7 +55,7 @@ def get_restaurant(restaurant_id):
             restaurant['comments'] = cursor.fetchall()
             return restaurant
 
-@bp.post('/reviews')
+@bp.post('/restaurants/reviews')
 @jwt_required()
 def add_review():
     data = request.get_json()
@@ -68,7 +69,6 @@ def add_review():
         with connection.cursor(prepared=True) as cursor:
             cursor.execute('INSERT INTO Reviews(restaurant_id, user_id, rating, comments, timestamp) VALUES (%s, %s, %s, %s, %s)', (restaurant_id, user_id, rating, comments, timestamp))
             connection.commit()
-            
             return {'message': 'Review added successfully!'}
 
 @bp.post('/restaurants/comment')
