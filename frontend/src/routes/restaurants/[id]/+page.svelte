@@ -28,8 +28,6 @@
 		TwitterSolid
 	} from 'flowbite-svelte-icons';
 	import CommentItem from '$lib/CommentItem.svelte';
-	import { PUBLIC_BACKEND_BASE } from '$env/static/public';
-	import { onMount } from 'svelte';
 
 	export let data: PageData;
 
@@ -38,22 +36,13 @@
 	function formatPrice(price: number) {
 		return price.toFixed(2);
 	}
-	let loading = true;
-	let discounts = [];
-	let today = new Date().toLocaleString('en-us', { weekday: 'short' }).toLowerCase();
-
-	async function fetchDiscounts() {
-		const response = await fetch(PUBLIC_BACKEND_BASE+`/discounts/${restaurant.restaurant_id}`);
-		discounts = await response.json();
-		console.log(discounts);
-		loading = false;
-	}
 
 	function getDiscountedPrice(itemId, originalPrice) {
+        const today = new Date().toLocaleString('en-us', { weekday: 'short' }).toLowerCase();
 		if (itemId === 17879) {
 			console.log ("HMMMM");
 		}
-		const applicableDiscounts = discounts.filter(
+		const applicableDiscounts = restaurant.discounts.filter(
 			(d) =>((d.item_id === itemId || d.item_id === null) && d.weekday === today)
 		);
 		if (applicableDiscounts.length === 0) {
@@ -75,9 +64,6 @@
 		return { price: newPrice, discounted };
 	}
 
-	onMount(async () => {
-		await fetchDiscounts();
-	});
 	function formatReview(review) {
 		return {
 			id: review.review_id,
@@ -212,243 +198,242 @@
 			});
 	}
 </script>
-{#if loading}
-	<h1>Please wait...</h1>
-{:else}
-	<div class="container mx-auto max-w-[800px] p-6">
-		<!-- Restaurant Details -->
-		<h1 class="mb-4 text-3xl font-bold text-gray-900 dark:text-gray-100">
-			{restaurant.restaurant_name}
-		</h1>
-		{#if restaurant.description}
-		<p class="mb-6 text-lg text-gray-700 dark:text-gray-300">{restaurant.description}</p>
-		{/if}
-		<!-- Share to Social Media Buttons -->
-		<div class="mb-6 flex space-x-2">
-			<Button
-				on:click={shareOnTwitter}
-				class="flex items-center gap-2 rounded bg-blue-500 px-4 py-2 text-white"
-			>
-				<TwitterSolid class="h-5 w-5" /> Share on Twitter
-			</Button>
+<div class="container mx-auto max-w-[800px] p-6">
+    <!-- Restaurant Details -->
+    <h1 class="mb-4 text-3xl font-bold text-gray-900 dark:text-gray-100">
+        {restaurant.restaurant_name}
+    </h1>
+    {#if restaurant.description}
+    <p class="mb-6 text-lg text-gray-700 dark:text-gray-300">{restaurant.description}</p>
+    {/if}
+    <!-- Share to Social Media Buttons -->
+    <div class="mb-6 flex space-x-2">
+        <Button
+            on:click={shareOnTwitter}
+            class="flex items-center gap-2 rounded bg-blue-500 px-4 py-2 text-white"
+        >
+            <TwitterSolid class="h-5 w-5" /> Share on Twitter
+        </Button>
 
-			<Button
-				on:click={shareOnLinkedIn}
-				class="flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white"
-			>
-				<LinkedinSolid class="h-5 w-5" /> Share on LinkedIn
-			</Button>
+        <Button
+            on:click={shareOnLinkedIn}
+            class="flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white"
+        >
+            <LinkedinSolid class="h-5 w-5" /> Share on LinkedIn
+        </Button>
 
-			<Button
-				on:click={shareOnGitHub}
-				class="flex items-center gap-2 rounded bg-gray-800 px-4 py-2 text-white"
-			>
-				<GithubSolid class="h-5 w-5" /> Share on GitHub
-			</Button>
+        <Button
+            on:click={shareOnGitHub}
+            class="flex items-center gap-2 rounded bg-gray-800 px-4 py-2 text-white"
+        >
+            <GithubSolid class="h-5 w-5" /> Share on GitHub
+        </Button>
 
-		<Button
-			on:click={copyToClipboard}
-			class="flex items-center gap-2 rounded bg-gray-500 px-4 py-2 text-white"
-		>
-			Copy Link
-		</Button>
-	</div>
-	{#if data.user}
-	<GradientButton color="pinkToOrange" on:click={() => (formModal = true)}>Write a review!</GradientButton> 
-	{/if}
-	<Modal bind:open={formModal} size="xs" autoclose={false} class="w-full">
-		<form class="flex flex-col space-y-6">
-			<h3 class="mb-2 text-xl font-medium text-gray-900 dark:text-white">Leave a review!</h3>
-			<Label class="space-y-2">
-				<span>Select your rating</span>
-				<Select class="mt-2" items={ratings} bind:value={selected} name="rating" required />
-			</Label>
-			<Label class="space-y-2">
-				<span>Write your review</span>
-				<Textarea
-					id="review"
-					rows="6"
-					class="mb-4 resize-none"
-					placeholder="Write a review..."
-					name="comments"
-					required
-				></Textarea>
-			</Label>
-			<input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
-			<Button type="submit" class="w-full">
-				Post Review
-			</Button>
-		</form>
-	</Modal>
-
-		<h2 class="mt-4 mb-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">Menu</h2>
-		<Table hoverable={true}>
-			<TableHead>
-				<TableHeadCell>Item Name</TableHeadCell>
-				<TableHeadCell>Price</TableHeadCell>
-			</TableHead>
-			<TableBody tableBodyClass="divide-y">
-				{#each restaurant.menu as item}
-					<TableBodyRow>
-						<TableBodyCell>{item.item_name}</TableBodyCell>
-						<TableBodyCell>
-							{#if getDiscountedPrice(item.item_id, item.Price).discounted}
-								<s class="text-red-500">${formatPrice(item.Price)}</s>
-								<span class="text-green-500 ml-2">${formatPrice(getDiscountedPrice(item.item_id, item.Price).price)}</span>
-							{:else}
-								${formatPrice(item.Price)}
-							{/if}
-						</TableBodyCell>
-					</TableBodyRow>
-				{/each}
-			</TableBody>
-		</Table>
-
-		<h2 class="mt-4 mb-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">Discounts</h2>
-		<Table hoverable={true}>
-			<TableHead>
-				<TableHeadCell>Item Name</TableHeadCell>
-				<TableHeadCell>Discount</TableHeadCell>
-				<TableHeadCell>Day</TableHeadCell>
-			</TableHead>
-			<TableBody tableBodyClass="divide-y">
-				{#each discounts as discount}
-					<TableBodyRow>
-						<TableBodyCell>
-							{#if discount.item_id === null}
-								All Items
-							{:else}
-								{#each restaurant.menu as item}
-									{#if item.item_id === discount.item_id}
-										{item.item_name}
-									{/if}
-								{/each}
-							{/if}
-						</TableBodyCell>
-						<TableBodyCell>
-							{discount.discount_type === '%' ? `${formatPrice(discount.discount)}%` : `$${formatPrice(discount.discount)}`}
-						</TableBodyCell>
-						<TableBodyCell>{discount.weekday}</TableBodyCell>
-					</TableBodyRow>
-				{/each}
-			</TableBody>
-		</Table>
-
-		<Tabs tabStyle="underline">
-			<TabItem title="Reviews" open>
-				{#if restaurant.reviews.length > 0}
-					{#each restaurant.reviews as review}
-						<RatingComment comment={formatReview(review)}>
-							<p class="mb-2 font-light text-gray-500 dark:text-gray-400">{review.comments}</p>
-						</RatingComment>
-					{/each}
-				{:else}
-					<p class="text-gray-700 dark:text-gray-300">
-						No reviews yet. Be the first to leave a review!
-					</p>
-				{/if}
-			</TabItem>
-			<TabItem title={'Comments (' + comments.length + ')'}>
-				{#if data.user}
-					<form class="mb-6" on:submit|preventDefault={(e) => handleComment(e, -1)}>
-						<Label for="comment" class="sr-only">Your comment</Label>
-						<Textarea
-							id="comment"
-							rows="6"
-							class="mb-4 resize-none"
-							placeholder="Write a comment..."
-							name="content"
-							required
-						></Textarea>
-						<Button type="submit" class="px-4 text-xs font-medium">
-							{#if comments_info[-1]?.submitting}
-								<Spinner class="me-3" size="4" color="white" />
-							{/if}
-							Post comment
-						</Button>
-						<input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
-						{#if comments_info[-1]?.error}
-								<p class="text-red-500">
-									An error occurred while posting your comment. Please try again later.
-								</p>
-						{/if}
-					</form>
-				{/if}
-				{#each comments as comment, i}
-					<CommentItem
-						{comment}
-						articleClass={i !== 0 ? 'border-t border-gray-200 dark:border-gray-700 rounded-none' : ''}
-						replyButton={!!data.user}
-					>
-						<svelte:fragment slot="dropdownMenu">
-							{#if data.user?.sub === comment.commenter.id}
-								<DotsHorizontalOutline class={`dots-menu-${comment.id} dark:text-white`} />
-								<Dropdown triggeredBy={'.dots-menu-' + comment.id}>
-									<DropdownItem on:click={(e) => deleteComment(comment.id)}>Delete</DropdownItem>
-								</Dropdown>
-							{/if}
-						</svelte:fragment>
-						<svelte:fragment slot="reply">
-							<div class="mt-4 flex items-center space-x-4">
-								<button
-									type="button"
-									class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400"
-									on:click={(e) => ((comments_info[comment.id] ??= {}).replying = true)}
-								>
-									<MessageDotsOutline class="mr-1 h-4 w-4" />
-									Reply
-								</button>
-							</div>
-							{#if comments_info[comment.id]?.replying}
-								<form class="mt-6" on:submit|preventDefault={(e) => handleComment(e, comment.id)}>
-									<input type="hidden" name="parent_comment_id" value={comment.id} />
-									<input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
-									<Label for={'comment_' + comment.id} class="sr-only">Your comment</Label>
-									<Textarea
-										id={'comment_' + comment.id}
-										rows="6"
-										class="mb-4 resize-none"
-										placeholder="Write a reply..."
-										name="content"
-										required
-									></Textarea>
-									<div class="flex flex-wrap gap-2">
-										<GradientButton type="submit" class="px-4 text-xs font-medium" color="green">
-											{#if comments_info[comment.id]?.submitting}
-												<Spinner class="me-3" size="4" color="white" />
-											{/if}
-											Post comment
-										</GradientButton>
-										<GradientButton color="red" on:click={(e) => closeReplyBox(comment.id)}>
-											Cancel
-										</GradientButton>
-									</div>
-									<input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
-									{#if comments_info[comment.id]?.error}
-										<p class="text-red-500">
-											An error occurred while posting your comment. Please try again later.
-										</p>
-									{/if}
-								</form>
-							{/if}
-						</svelte:fragment>
-					</CommentItem>
-					{#each comment.replies as reply}
-						<CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false}>
-							<svelte:fragment slot="dropdownMenu">
-								{#if data.user?.sub === reply.commenter.id}
-									<DotsHorizontalOutline class={`dots-menu-${reply.id} dark:text-white`} />
-									<Dropdown triggeredBy={'.dots-menu-' + reply.id}>
-										<DropdownItem on:click={(e) => deleteComment(reply.id, comment.id)}
-											>Delete</DropdownItem
-										>
-									</Dropdown>
-								{/if}
-							</svelte:fragment>
-						</CommentItem>
-					{/each}
-				{/each}
-			</TabItem>
-		</Tabs>
-	</div>
+    <Button
+        on:click={copyToClipboard}
+        class="flex items-center gap-2 rounded bg-gray-500 px-4 py-2 text-white"
+    >
+        Copy Link
+    </Button>
+</div>
+{#if data.user}
+<GradientButton color="pinkToOrange" on:click={() => (formModal = true)}>Write a review!</GradientButton> 
 {/if}
+<Modal bind:open={formModal} size="xs" autoclose={false} class="w-full">
+    <form class="flex flex-col space-y-6">
+        <h3 class="mb-2 text-xl font-medium text-gray-900 dark:text-white">Leave a review!</h3>
+        <Label class="space-y-2">
+            <span>Select your rating</span>
+            <Select class="mt-2" items={ratings} bind:value={selected} name="rating" required />
+        </Label>
+        <Label class="space-y-2">
+            <span>Write your review</span>
+            <Textarea
+                id="review"
+                rows="6"
+                class="mb-4 resize-none"
+                placeholder="Write a review..."
+                name="comments"
+                required
+            ></Textarea>
+        </Label>
+        <input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
+        <Button type="submit" class="w-full">
+            Post Review
+        </Button>
+    </form>
+</Modal>
+
+    <h2 class="mt-4 mb-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">Menu</h2>
+    <Table hoverable={true}>
+        <TableHead>
+            <TableHeadCell>Item Name</TableHeadCell>
+            <TableHeadCell>Price</TableHeadCell>
+        </TableHead>
+        <TableBody tableBodyClass="divide-y">
+            {#each restaurant.menu as item}
+                <TableBodyRow>
+                    <TableBodyCell>{item.item_name}</TableBodyCell>
+                    <TableBodyCell>
+                        {@const discountCalc = getDiscountedPrice(item.item_id, item.Price)}
+                        {#if discountCalc.discounted}
+                            <s class="text-red-500">${formatPrice(item.Price)}</s>
+                            <span class="text-green-500 ml-2">${formatPrice(discountCalc.price)}</span>
+                        {:else}
+                            ${formatPrice(item.Price)}
+                        {/if}
+                    </TableBodyCell>
+                </TableBodyRow>
+            {/each}
+        </TableBody>
+    </Table>
+
+    {#if restaurant.discounts?.length}
+        <h2 class="mt-4 mb-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">Discounts</h2>
+        <Table hoverable={true}>
+            <TableHead>
+                <TableHeadCell>Item Name</TableHeadCell>
+                <TableHeadCell>Discount</TableHeadCell>
+                <TableHeadCell>Day</TableHeadCell>
+            </TableHead>
+            <TableBody tableBodyClass="divide-y">
+                {#each restaurant.discounts as discount}
+                    <TableBodyRow>
+                        <TableBodyCell>
+                            {#if discount.item_id === null}
+                                All Items
+                            {:else}
+                                {#each restaurant.menu as item}
+                                    {#if item.item_id === discount.item_id}
+                                        {item.item_name}
+                                    {/if}
+                                {/each}
+                            {/if}
+                        </TableBodyCell>
+                        <TableBodyCell>
+                            {discount.discount_type === '%' ? `${formatPrice(discount.discount)}%` : `$${formatPrice(discount.discount)}`}
+                        </TableBodyCell>
+                        <TableBodyCell>{discount.weekday}</TableBodyCell>
+                    </TableBodyRow>
+                {/each}
+            </TableBody>
+        </Table>
+    {/if}
+
+    <Tabs tabStyle="underline">
+        <TabItem title="Reviews" open>
+            {#if restaurant.reviews.length > 0}
+                {#each restaurant.reviews as review}
+                    <RatingComment comment={formatReview(review)}>
+                        <p class="mb-2 font-light text-gray-500 dark:text-gray-400">{review.comments}</p>
+                    </RatingComment>
+                {/each}
+            {:else}
+                <p class="text-gray-700 dark:text-gray-300">
+                    No reviews yet. Be the first to leave a review!
+                </p>
+            {/if}
+        </TabItem>
+        <TabItem title={'Comments (' + comments.length + ')'}>
+            {#if data.user}
+                <form class="mb-6" on:submit|preventDefault={(e) => handleComment(e, -1)}>
+                    <Label for="comment" class="sr-only">Your comment</Label>
+                    <Textarea
+                        id="comment"
+                        rows="6"
+                        class="mb-4 resize-none"
+                        placeholder="Write a comment..."
+                        name="content"
+                        required
+                    ></Textarea>
+                    <Button type="submit" class="px-4 text-xs font-medium">
+                        {#if comments_info[-1]?.submitting}
+                            <Spinner class="me-3" size="4" color="white" />
+                        {/if}
+                        Post comment
+                    </Button>
+                    <input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
+                    {#if comments_info[-1]?.error}
+                            <p class="text-red-500">
+                                An error occurred while posting your comment. Please try again later.
+                            </p>
+                    {/if}
+                </form>
+            {/if}
+            {#each comments as comment, i}
+                <CommentItem
+                    {comment}
+                    articleClass={i !== 0 ? 'border-t border-gray-200 dark:border-gray-700 rounded-none' : ''}
+                    replyButton={!!data.user}
+                >
+                    <svelte:fragment slot="dropdownMenu">
+                        {#if data.user?.sub === comment.commenter.id}
+                            <DotsHorizontalOutline class={`dots-menu-${comment.id} dark:text-white`} />
+                            <Dropdown triggeredBy={'.dots-menu-' + comment.id}>
+                                <DropdownItem on:click={(e) => deleteComment(comment.id)}>Delete</DropdownItem>
+                            </Dropdown>
+                        {/if}
+                    </svelte:fragment>
+                    <svelte:fragment slot="reply">
+                        <div class="mt-4 flex items-center space-x-4">
+                            <button
+                                type="button"
+                                class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400"
+                                on:click={(e) => ((comments_info[comment.id] ??= {}).replying = true)}
+                            >
+                                <MessageDotsOutline class="mr-1 h-4 w-4" />
+                                Reply
+                            </button>
+                        </div>
+                        {#if comments_info[comment.id]?.replying}
+                            <form class="mt-6" on:submit|preventDefault={(e) => handleComment(e, comment.id)}>
+                                <input type="hidden" name="parent_comment_id" value={comment.id} />
+                                <input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
+                                <Label for={'comment_' + comment.id} class="sr-only">Your comment</Label>
+                                <Textarea
+                                    id={'comment_' + comment.id}
+                                    rows="6"
+                                    class="mb-4 resize-none"
+                                    placeholder="Write a reply..."
+                                    name="content"
+                                    required
+                                ></Textarea>
+                                <div class="flex flex-wrap gap-2">
+                                    <GradientButton type="submit" class="px-4 text-xs font-medium" color="green">
+                                        {#if comments_info[comment.id]?.submitting}
+                                            <Spinner class="me-3" size="4" color="white" />
+                                        {/if}
+                                        Post comment
+                                    </GradientButton>
+                                    <GradientButton color="red" on:click={(e) => closeReplyBox(comment.id)}>
+                                        Cancel
+                                    </GradientButton>
+                                </div>
+                                <input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
+                                {#if comments_info[comment.id]?.error}
+                                    <p class="text-red-500">
+                                        An error occurred while posting your comment. Please try again later.
+                                    </p>
+                                {/if}
+                            </form>
+                        {/if}
+                    </svelte:fragment>
+                </CommentItem>
+                {#each comment.replies as reply}
+                    <CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false}>
+                        <svelte:fragment slot="dropdownMenu">
+                            {#if data.user?.sub === reply.commenter.id}
+                                <DotsHorizontalOutline class={`dots-menu-${reply.id} dark:text-white`} />
+                                <Dropdown triggeredBy={'.dots-menu-' + reply.id}>
+                                    <DropdownItem on:click={(e) => deleteComment(reply.id, comment.id)}
+                                        >Delete</DropdownItem
+                                    >
+                                </Dropdown>
+                            {/if}
+                        </svelte:fragment>
+                    </CommentItem>
+                {/each}
+            {/each}
+        </TabItem>
+    </Tabs>
+</div>
