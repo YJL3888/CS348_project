@@ -24,7 +24,7 @@
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
-					},
+					}
 				});
 				favoriteRestaurantIds = await favoritesResponse.json();
 			}
@@ -54,7 +54,6 @@
 		}
 	});
 
-
 	// subscribes to search results (to display h1 if no results)
 	searchResults.subscribe((value) => {
 		results = value;
@@ -66,24 +65,46 @@
 </script>
 
 <Section name="heroVisual" sectionClass="py-0">
-	<div class="mr-auto place-self-center lg:col-span-7">
-		<HeroHeader h1Class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white" pClass="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
+	<div class="mb-8 mr-40 mr-auto place-self-center lg:col-span-7">
+		<HeroHeader
+			h1Class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white"
+			pClass="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400"
+		>
 			<svelte:fragment slot="h1">
 				Discover Your Next Favorite Meal with GooseGooseGo!
 			</svelte:fragment>
 			<svelte:fragment slot="paragraph">
-				GooseGooseGo is your ultimate restaurant discovery app, designed to help food lovers find the best dining experiences nearby. Whether you're craving a cozy café, a bustling bistro, or a gourmet dinner, GooseGooseGo offers personalized recommendations, reviews, and menus to guide you to your perfect meal. Register now and embark on a culinary adventure!
+				GooseGooseGo is your ultimate restaurant discovery app, designed to help food lovers find
+				the best dining experiences nearby. Whether you're craving a cozy café, a bustling bistro,
+				or a gourmet dinner, GooseGooseGo offers personalized recommendations, reviews, and menus to
+				guide you to your perfect meal. Register now and embark on a culinary adventure!
 			</svelte:fragment>
 			{#if !data.user}
-				<Button href="/register" size="xl" color="red" class="inline-flex items-center justify-center mr-3">Get started<ArrowRightOutline size="md" class="ml-2 -mr-1" /></Button>
+				<Button
+					href="/register"
+					size="xl"
+					color="red"
+					class="mr-3 inline-flex items-center justify-center"
+				>
+					Get started<ArrowRightOutline size="md" class="-mr-1 ml-2" />
+				</Button>
 			{/if}
-			<Button color={data.user ? "red" : "light"} size="xl" class="inline-flex items-center justify-center" on:click={e => document.getElementById('nav-restaurant-search')?.focus()}>
-				Start Your Search <SearchOutline size="md" class="ml-2 -mr-1" />
+			<Button
+				color={data.user ? 'red' : 'light'}
+				size="xl"
+				class="inline-flex items-center justify-center"
+				on:click={(e) => document.getElementById('nav-restaurant-search')?.focus()}
+			>
+				Start Your Search <SearchOutline size="md" class="-mr-1 ml-2" />
 			</Button>
 		</HeroHeader>
 	</div>
-	<div class="hidden lg:mt-0 lg:flex lg:col-span-5">
-		<img src="/images/Food.jpg" alt="Food" />
+	<div class="aspect-ratio-container relative hidden w-full lg:col-span-5 lg:mt-0 lg:flex">
+		<img
+			src="/images/Food.jpg"
+			alt="Food"
+			class="absolute left-0 top-0 h-full w-full object-cover"
+		/>
 	</div>
 </Section>
 
@@ -93,7 +114,7 @@
 	</p>
 {/if}
 
-<div class="flex h-full w-full search-results-container">
+<div class="search-results-container flex h-full w-full">
 	<div class="flex-1">
 		{#if !fresh && results.length !== 0}
 			<h1 class="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">Search Results</h1>
