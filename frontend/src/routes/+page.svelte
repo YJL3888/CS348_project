@@ -63,7 +63,7 @@
 		currentPage.set(1); // Reset to the first page on new search results
 	});
 </script>
-{#if fresh}
+
 <Section name="heroVisual" sectionClass="py-0">
 	<div class="mb-8 mr-40 mr-auto place-self-center lg:col-span-7">
 		<HeroHeader
@@ -107,7 +107,6 @@
 		/>
 	</div>
 </Section>
-{/if}
 
 {#if fresh}
 	<p class="mb-8 text-gray-600 dark:text-gray-400">
