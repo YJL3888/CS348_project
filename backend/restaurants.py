@@ -53,8 +53,11 @@ def get_restaurant(restaurant_id):
             restaurant['reviews'] = cursor.fetchall()
             cursor.execute('SELECT * FROM Comments NATURAL JOIN Users WHERE restaurant_id=%s AND deleted=0 ORDER BY posted_time', (restaurant_id,))
             restaurant['comments'] = cursor.fetchall()
+            cursor.execute('SELECT * FROM Discount WHERE restaurant_id=%s', (restaurant_id,))
+            restaurant['discounts'] = cursor.fetchall()
             return restaurant
-        
+
+
 @bp.post('/restaurants/review')
 @jwt_required()
 def add_review():
@@ -67,6 +70,7 @@ def add_review():
             connection.commit()
             cursor.execute('SELECT * FROM Reviews NATURAL JOIN Users WHERE review_id=%s', (cursor.lastrowid,))
             return cursor.fetchone()
+
 
 @bp.post('/restaurants/comment')
 @jwt_required()
