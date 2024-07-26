@@ -69,6 +69,20 @@ def comment_on_restaurant():
             return cursor.fetchone()
 
 
+@bp.post('/restaurants/comment/delete')
+@jwt_required()
+def delete_comment():
+    print('delete', request.form)
+    with create_connection() as connection:
+        with connection.cursor(prepared=True, dictionary=True) as cursor:
+            cursor.execute('UPDATE Comments SET deleted=1 WHERE comment_id=%s AND user_id=%s',
+                           (request.form['comment_id'], current_user['user_id']))
+            if cursor.rowcount != 1:
+                abort(403)
+            connection.commit()
+            return {}
+
+
 @bp.get('/search_restaurants')
 def search_restaurants():
     search_query = request.args.get('query', '')
