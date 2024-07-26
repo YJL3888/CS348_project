@@ -342,7 +342,7 @@
                 <p class="mt-5" />
                 {#each restaurant.reviews as review (review.review_id)}
                     <RatingComment comment={formatReview(review)}>
-                        <p class="mb-2 font-light text-gray-500 dark:text-gray-400">{review.comments}</p>
+                        <p class="mb-2 font-light text-gray-500 dark:text-gray-400 whitespace-break-spaces">{review.comments}</p>
                     </RatingComment>
                 {/each}
             {/if}
@@ -376,7 +376,7 @@
             {#each comments as comment, i (comment.id)}
                 <CommentItem
                     {comment}
-                    articleClass={i ? 'border-t border-gray-200 dark:border-gray-700 rounded-none' : ''}
+                    articleClass={(i ? 'border-t border-gray-200 dark:border-gray-700 rounded-none' : '') + ' whitespace-break-spaces'}
                     replyButton={!!data.user}
                 >
                     <svelte:fragment slot="dropdownMenu">
@@ -433,7 +433,7 @@
                     </svelte:fragment>
                 </CommentItem>
                 {#each comment.replies as reply (reply.id)}
-                    <CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false}>
+                    <CommentItem comment={reply} articleClass="ml-6 lg:ml-12 whitespace-break-spaces" replyButton={false}>
                         <svelte:fragment slot="dropdownMenu">
                             {#if data.user?.sub === reply.commenter.id}
                                 <DotsHorizontalOutline class={`dots-menu-${reply.id} dark:text-white`} />
