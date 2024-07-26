@@ -54,6 +54,22 @@ def get_restaurant(restaurant_id):
             restaurant['comments'] = cursor.fetchall()
             return restaurant
 
+@bp.post('/reviews')
+@jwt_required()
+def add_review():
+    data = request.get_json()
+    restaurant_id = data['restaurant_id']
+    user_id = current_user['user_id']
+    rating = data['rating']
+    comments = data.get('comments', '')
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    with create_connection() as connection:
+        with connection.cursor(prepared=True) as cursor:
+            cursor.execute('INSERT INTO Reviews(restaurant_id, user_id, rating, comments, timestamp) VALUES (%s, %s, %s, %s, %s)', (restaurant_id, user_id, rating, comments, timestamp))
+            connection.commit()
+            
+            return {'message': 'Review added successfully!'}
 
 @bp.post('/restaurants/comment')
 @jwt_required()
