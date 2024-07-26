@@ -185,7 +185,7 @@ def get_favorites():
 @bp.get('/discounts/<int:restaurant_id>')
 def get_discounts_for_restaurant(restaurant_id):
     with create_connection() as connection:
-        with connection.cursor(prepared=True) as cursor:
+        with connection.cursor(prepared=True, dictionary=True) as cursor:
             cursor.execute('SELECT * FROM Discount WHERE restaurant_id=%s', (restaurant_id,))
             discounts = cursor.fetchall()
             return discounts
