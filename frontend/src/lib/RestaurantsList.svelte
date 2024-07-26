@@ -129,7 +129,7 @@
 
 {#if results.length > 0}
 	<div class="restaurant-list">
-		{#each paginatedResults as restaurant}
+		{#each paginatedResults as restaurant (restaurant.id)}
 			<RestaurantCard {restaurant} {toggleFavorite} {toggleMenu} {toggleHover} {data} />
 		{/each}
 	</div>
