@@ -14,7 +14,7 @@ import password_reset
 
 app = Flask(__name__)
 CORS(app, origins=os.environ['CORS_ORIGINS'])
-app.config['JWT_SECRET_KEY'] = secrets.token_hex(64)
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', secrets.token_hex(64))
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 jwt = JWTManager(app)
 app.register_blueprint(restaurants.bp)
@@ -100,7 +100,8 @@ def get_review(restaurant_id):
             cursor.execute('SELECT * FROM Reviews WHERE restaurant_id=%s', (restaurant_id,))
             reviews = cursor.fetchall()
             return reviews
-        
+
+
 @app.get('/recommendations')
 def get_recommendations():
     with create_connection() as connection:
@@ -129,5 +130,7 @@ def get_recommendations():
             ''')
             recs = cursor.fetchall()
             return recs
+
+
 if __name__ == '__main__':
     app.run()
