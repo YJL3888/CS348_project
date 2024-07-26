@@ -66,7 +66,7 @@ def add_review():
             cursor.execute('''
             INSERT INTO Reviews(restaurant_id, user_id, rating, comments, timestamp) VALUES (%s, %s, %s, %s, %s)
             ''', (request.form['restaurant_id'], current_user['user_id'], request.form['rating'], 
-                  request.form('review'), datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+                  request.form['comments'], datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
             connection.commit()
             cursor.execute('SELECT * FROM Reviews NATURAL JOIN Users WHERE review_id=%s', (cursor.lastrowid,))
             return cursor.fetchone()
