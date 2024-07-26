@@ -108,6 +108,19 @@
 		comments_info[id].replying = false;
 		comments_info[id].error = false;
 	}
+
+    async function deleteComment(id, par_id = null) {
+        const res = await fetch('/api/comment/delete', {
+            method: 'POST',
+            body: new URLSearchParams({comment_id: id})
+        });
+        if (res.ok) {
+            if (par_id) {
+                const parIdx = comments.findIndex(c => c.id === par_id);
+                comments[parIdx].replies = comments[parIdx].replies.filter(r => r.id !== id);
+            } else comments = comments.filter(c => c.id !== id);
+        }
+    }
 </script>
 
 <div class="container mx-auto max-w-[800px] p-6">
@@ -183,7 +196,7 @@
 						{#if data.user?.sub === comment.commenter.id}
 							<DotsHorizontalOutline class={`dots-menu-${comment.id} dark:text-white`} />
 							<Dropdown triggeredBy={'.dots-menu-' + comment.id}>
-								<DropdownItem>Delete</DropdownItem>
+								<DropdownItem on:click={e => deleteComment(comment.id)}>Delete</DropdownItem>
 							</Dropdown>
 						{/if}
 					</svelte:fragment>
@@ -236,9 +249,9 @@
 					<CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false}>
                         <svelte:fragment slot="dropdownMenu">
                             {#if data.user?.sub === reply.commenter.id}
-                                <DotsHorizontalOutline class={`dots-menu-${comment.id} dark:text-white`} />
-                                <Dropdown triggeredBy={'.dots-menu-' + comment.id}>
-                                    <DropdownItem>Delete</DropdownItem>
+                                <DotsHorizontalOutline class={`dots-menu-${reply.id} dark:text-white`} />
+                                <Dropdown triggeredBy={'.dots-menu-' + reply.id}>
+                                    <DropdownItem on:click={e => deleteComment(reply.id, comment.id)}>Delete</DropdownItem>
                                 </Dropdown>
                             {/if}
                         </svelte:fragment>
