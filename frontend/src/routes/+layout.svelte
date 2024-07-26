@@ -178,17 +178,16 @@
 </div>	
 
 <!-- Footer -->
-<footer class="mt-auto flex items-center justify-center py-4 bg-[#508c2c] dark:bg-[#f0542c]">
-    <div class="flex justify-center items-center text-white">
-        <P class="text-white">
-            © 2024 GooseGooseGuys.
-		</P>
-        <a href="https://github.com/YJL3888/GooseGooseGo_CS348" class="ml-4 text-white underline">
-            See source code
-        </a>
-    </div>
+<footer class="mt-auto flex items-center justify-center py-4 bg-gray-100 dark:bg-gray-800">
+    <Footer>
+        <div class="flex justify-center items-center">
+			<p class="text-sm text-gray-500 dark:text-gray-400">© 2024 GooseGooseGuys.</p>
+			<FooterLinkGroup ulClass="flex flex-wrap items-center ml-2 mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0 underline">
+				<FooterLink href="https://github.com/YJL3888/GooseGooseGo_CS348">See Our Source Code</FooterLink>
+			</FooterLinkGroup>
+        </div>
+    </Footer>
 </footer>
-
 
 <style lang="postcss">
     :global(body) {
