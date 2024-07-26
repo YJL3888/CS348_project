@@ -208,9 +208,9 @@
 			Copy Link
 		</Button>
 	</div>
-
+	{#if data.user}
 	<GradientButton color="pinkToOrange" on:click={() => (formModal = true)}>Write a review!</GradientButton> 
-
+	{/if}
 	<Modal bind:open={formModal} size="xs" autoclose={false} class="w-full">
 		<form class="flex flex-col space-y-6">
 			<h3 class="mb-2 text-xl font-medium text-gray-900 dark:text-white">Leave a review!</h3>
