@@ -229,40 +229,13 @@
             <GithubSolid class="h-5 w-5" /> Share on GitHub
         </Button>
 
-    <Button
-        on:click={copyToClipboard}
-        class="flex items-center gap-2 rounded bg-gray-500 px-4 py-2 text-white"
-    >
-        Copy Link
-    </Button>
-</div>
-{#if data.user}
-<GradientButton color="pinkToOrange" on:click={() => (formModal = true)}>Write a review!</GradientButton> 
-{/if}
-<Modal bind:open={formModal} size="xs" autoclose={false} class="w-full">
-    <form class="flex flex-col space-y-6">
-        <h3 class="mb-2 text-xl font-medium text-gray-900 dark:text-white">Leave a review!</h3>
-        <Label class="space-y-2">
-            <span>Select your rating</span>
-            <Select class="mt-2" items={ratings} bind:value={selected} name="rating" required />
-        </Label>
-        <Label class="space-y-2">
-            <span>Write your review</span>
-            <Textarea
-                id="review"
-                rows="6"
-                class="mb-4 resize-none"
-                placeholder="Write a review..."
-                name="comments"
-                required
-            ></Textarea>
-        </Label>
-        <input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
-        <Button type="submit" class="w-full">
-            Post Review
+        <Button
+            on:click={copyToClipboard}
+            class="flex items-center gap-2 rounded bg-gray-500 px-4 py-2 text-white"
+        >
+            Copy Link
         </Button>
-    </form>
-</Modal>
+    </div>
 
     <h2 class="mt-4 mb-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">Menu</h2>
     <Table hoverable={true}>
@@ -322,16 +295,45 @@
 
     <Tabs tabStyle="underline">
         <TabItem title="Reviews" open>
-            {#if restaurant.reviews.length > 0}
+            {#if !restaurant.reviews.length}
+                <p class="text-gray-700 dark:text-gray-300 mb-5">
+                    No reviews yet. Be the first to leave a review!
+                </p>
+            {/if}
+            {#if data.user}
+                <GradientButton color="pinkToOrange" on:click={() => (formModal = true)}>Write a review!</GradientButton>
+                <Modal bind:open={formModal} size="xs" autoclose={false} outsideclose class="w-full">
+                    <form class="flex flex-col space-y-6">
+                        <h3 class="mb-2 text-xl font-medium text-gray-900 dark:text-white">Leave a review!</h3>
+                        <Label class="space-y-2">
+                            <span>Select your rating</span>
+                            <Select class="mt-2" items={ratings} bind:value={selected} name="rating" required />
+                        </Label>
+                        <Label class="space-y-2">
+                            <span>Write your review</span>
+                            <Textarea
+                                id="review"
+                                rows="6"
+                                class="mb-4 resize-none"
+                                placeholder="Write a review..."
+                                name="comments"
+                                required
+                            ></Textarea>
+                        </Label>
+                        <input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
+                        <Button type="submit" class="w-full">
+                            Post Review
+                        </Button>
+                    </form>
+                </Modal>
+            {/if}
+            {#if restaurant.reviews.length}
+                <p class="mt-5" />
                 {#each restaurant.reviews as review}
                     <RatingComment comment={formatReview(review)}>
                         <p class="mb-2 font-light text-gray-500 dark:text-gray-400">{review.comments}</p>
                     </RatingComment>
                 {/each}
-            {:else}
-                <p class="text-gray-700 dark:text-gray-300">
-                    No reviews yet. Be the first to leave a review!
-                </p>
             {/if}
         </TabItem>
         <TabItem title={'Comments (' + comments.length + ')'}>
