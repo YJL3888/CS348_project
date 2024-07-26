@@ -178,12 +178,15 @@
 </div>	
 
 <!-- Footer -->
-<footer class="mt-auto flex items-center justify-center py-4 bg-gray-100 dark:bg-gray-800">
-    <Footer>
-        <div class="flex justify-center items-center">
-            <FooterCopyright href="/" by="GooseGooseGuys." year={2024} />
-        </div>
-    </Footer>
+<footer class="mt-auto flex items-center justify-center py-4 bg-[#508c2c] dark:bg-[#f0542c]">
+    <div class="flex justify-center items-center text-white">
+        <P class="text-white">
+            © 2024 GooseGooseGuys.
+		</P>
+        <a href="https://github.com/YJL3888/GooseGooseGo_CS348" class="ml-4 text-white underline">
+            See source code
+        </a>
+    </div>
 </footer>
 
 
