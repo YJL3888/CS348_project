@@ -340,7 +340,7 @@
             {/if}
             {#if restaurant.reviews.length}
                 <p class="mt-5" />
-                {#each restaurant.reviews as review}
+                {#each restaurant.reviews as review (review.review_id)}
                     <RatingComment comment={formatReview(review)}>
                         <p class="mb-2 font-light text-gray-500 dark:text-gray-400">{review.comments}</p>
                     </RatingComment>
@@ -373,10 +373,10 @@
                     {/if}
                 </form>
             {/if}
-            {#each comments as comment, i}
+            {#each comments as comment, i (comment.id)}
                 <CommentItem
                     {comment}
-                    articleClass={i !== 0 ? 'border-t border-gray-200 dark:border-gray-700 rounded-none' : ''}
+                    articleClass={i ? 'border-t border-gray-200 dark:border-gray-700 rounded-none' : ''}
                     replyButton={!!data.user}
                 >
                     <svelte:fragment slot="dropdownMenu">
@@ -432,7 +432,7 @@
                         {/if}
                     </svelte:fragment>
                 </CommentItem>
-                {#each comment.replies as reply}
+                {#each comment.replies as reply (reply.id)}
                     <CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false}>
                         <svelte:fragment slot="dropdownMenu">
                             {#if data.user?.sub === reply.commenter.id}
