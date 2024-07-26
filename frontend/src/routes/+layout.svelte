@@ -151,7 +151,6 @@
 					<span class="block text-sm">{data.user.username}</span>
 					<span class="block truncate text-sm font-medium">{data.user.email}</span>
 				</DropdownHeader>
-				<DropdownDivider />
 				<DropdownItem href="/logout">Log out</DropdownItem>
 			</Dropdown>
 		{:else}
