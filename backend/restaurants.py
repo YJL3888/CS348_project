@@ -103,10 +103,7 @@ def delete_comment():
 @bp.get('/search_restaurants')
 def search_restaurants():
     search_query = request.args.get('query', '')
-    search_fields = request.args.get('fields', '').split(',')
-
-    if not search_fields:
-        return {'error': 'fields are required'}, 400
+    search_fields = request.args['fields'].split(',')
 
     query_parts = []
     params = []
@@ -121,23 +118,16 @@ def search_restaurants():
     query = """
     SELECT 
         r.*,
-        CASE WHEN MAX(d.discount) IS NOT NULL THEN true ELSE false END as discount,
+        EXISTS(SELECT * FROM Discount d WHERE d.restaurant_id = r.restaurant_id) as discount,
         COUNT(rv.review_id) as review_count,
         AVG(rv.rating) as average_rating
-    FROM 
-        Restaurants r
-    LEFT JOIN 
-        Discount d ON r.restaurant_id = d.restaurant_id
-    LEFT JOIN 
-        Reviews rv ON r.restaurant_id = rv.restaurant_id
-    WHERE 
+    FROM Restaurants r
+    NATURAL LEFT JOIN Reviews rv
+    WHERE
         """ + " OR ".join(query_parts) + """
     GROUP BY 
         r.restaurant_id
     """
-
-    print("Executing query:", query)
-    print("With parameters:", params)
 
     with create_connection() as conn:
         with conn.cursor() as cursor:
