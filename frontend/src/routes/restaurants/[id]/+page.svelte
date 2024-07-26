@@ -376,7 +376,7 @@
             {#each comments as comment, i (comment.id)}
                 <CommentItem
                     {comment}
-                    articleClass={(i ? 'border-t border-gray-200 dark:border-gray-700 rounded-none' : '') + ' whitespace-break-spaces'}
+                    articleClass={i ? 'border-t border-gray-200 dark:border-gray-700 rounded-none' : ''}
                     replyButton={!!data.user}
                 >
                     <svelte:fragment slot="dropdownMenu">
@@ -433,7 +433,7 @@
                     </svelte:fragment>
                 </CommentItem>
                 {#each comment.replies as reply (reply.id)}
-                    <CommentItem comment={reply} articleClass="ml-6 lg:ml-12 whitespace-break-spaces" replyButton={false}>
+                    <CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false}>
                         <svelte:fragment slot="dropdownMenu">
                             {#if data.user?.sub === reply.commenter.id}
                                 <DotsHorizontalOutline class={`dots-menu-${reply.id} dark:text-white`} />

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { twMerge } from 'tailwind-merge';
-	import CommentItem from './CommentItem.svelte';
 	import { MessageDotsOutline } from 'flowbite-svelte-icons';
 	type Comment = {
 		id: string;
@@ -44,7 +43,7 @@
 		</div>
 		<slot name="dropdownMenu" />
 	</footer>
-	<p class="text-gray-500 dark:text-gray-400">
+	<p class="text-gray-500 dark:text-gray-400 whitespace-break-spaces">
 		{comment.content}
 	</p>
 	{#if replyButton}
