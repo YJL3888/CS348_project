@@ -63,7 +63,9 @@
 			favoriteRestaurantIds = await favoritesResponse.json();
 		}
 
-		const response = await fetch(`http://localhost:5000/search_restaurants?${params.toString()}`, {cache: "no-store"});
+		const response = await fetch(`http://localhost:5000/search_restaurants?${params.toString()}`, {
+			cache: 'no-store'
+		});
 		const resultData = await response.json();
 		const searchResults = resultData.map((restaurant) => ({
 			id: restaurant[0],
@@ -115,11 +117,7 @@
 	id="top-nav"
 >
 	<NavBrand href="/" on:click={reloadPage}>
-		<img
-			src="/images/goosegoosego.png"
-			class="ml-2 mr-2 h-16 w-16 rounded-full"
-			alt="Logo"
-		/>
+		<img src="/images/goosegoosego.png" class="ml-2 mr-2 h-16 w-16 rounded-full" alt="Logo" />
 		<P class="font-sans text-xl font-semibold text-[#4C8C2B]">GooseGooseGo</P>
 	</NavBrand>
 	<!-- Search Bar -->
@@ -160,7 +158,7 @@
 		<!-- Add Checkbox for Favourites -->
 		<div class="ml-2 flex items-center">
 			<Checkbox id="favourites-checkbox" bind:checked={showFavourites} />
-			<P for="favourites-checkbox" class="ml-1 text-sm text-gray-700">Favourites</P>
+			<P for="favourites-checkbox" class="ml-1 text-sm text-gray-700">Favorites</P>
 		</div>
 	</form>
 	<div class="flex md:order-2">
