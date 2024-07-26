@@ -18,7 +18,13 @@
 		Spinner,
 		GradientButton
 	} from 'flowbite-svelte';
-	import { DotsHorizontalOutline, MessageDotsOutline } from 'flowbite-svelte-icons';
+	import {
+		DotsHorizontalOutline,
+		MessageDotsOutline,
+		LinkedinSolid,
+		GithubSolid,
+		TwitterSolid
+	} from 'flowbite-svelte-icons';
 	import CommentItem from '$lib/CommentItem.svelte';
 
 	export let data: PageData;
@@ -53,7 +59,7 @@
 	const adjustComment = (comment) => ({
 		id: comment.comment_id,
 		commenter: {
-            id: comment.user_id,
+			id: comment.user_id,
 			name: comment.username,
 			profilePicture: '/images/goose.png'
 		},
@@ -73,7 +79,7 @@
 			).push(adjustedComment);
 			lookup.set(comment.comment_id, adjustedComment);
 		}
-        for (const comment of newComments) comment.replies.reverse();
+		for (const comment of newComments) comment.replies.reverse();
 		comments = newComments.reverse();
 	}
 
@@ -109,18 +115,49 @@
 		comments_info[id].error = false;
 	}
 
-    async function deleteComment(id, par_id = null) {
-        const res = await fetch('/api/comment/delete', {
-            method: 'POST',
-            body: new URLSearchParams({comment_id: id})
-        });
-        if (res.ok) {
-            if (par_id) {
-                const parIdx = comments.findIndex(c => c.id === par_id);
-                comments[parIdx].replies = comments[parIdx].replies.filter(r => r.id !== id);
-            } else comments = comments.filter(c => c.id !== id);
-        }
-    }
+	async function deleteComment(id, par_id = null) {
+		const res = await fetch('/api/comment/delete', {
+			method: 'POST',
+			body: new URLSearchParams({ comment_id: id })
+		});
+		if (res.ok) {
+			if (par_id) {
+				const parIdx = comments.findIndex((c) => c.id === par_id);
+				comments[parIdx].replies = comments[parIdx].replies.filter((r) => r.id !== id);
+			} else comments = comments.filter((c) => c.id !== id);
+		}
+	}
+	function shareOnTwitter() {
+		const url = encodeURIComponent(window.location.href);
+		const text = encodeURIComponent(
+			`Check out ${restaurant.restaurant_name}! ${restaurant.description}`
+		);
+		window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+	}
+
+	function shareOnLinkedIn() {
+		const url = window.location.href;
+		const text = `Check out ${restaurant.restaurant_name}! ${restaurant.description} ${url}`;
+		const shareUrl = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
+		window.open(shareUrl, '_blank');
+	}
+
+	function shareOnGitHub() {
+		const githubRepoUrl = 'https://github.com/YJL3888/GooseGooseGo_CS348/blob/main/README.md';
+		window.open(githubRepoUrl, '_blank');
+	}
+	function copyToClipboard() {
+		const url = window.location.href;
+
+		navigator.clipboard
+			.writeText(url)
+			.then(() => {
+				alert('Link copied to clipboard');
+			})
+			.catch((err) => {
+				console.error('Could not copy text: ', err);
+			});
+	}
 </script>
 
 <div class="container mx-auto max-w-[800px] p-6">
@@ -129,6 +166,36 @@
 		{restaurant.restaurant_name}
 	</h1>
 	<p class="mb-6 text-lg text-gray-700 dark:text-gray-300">{restaurant.description}</p>
+	<!-- Share to Social Media Buttons -->
+	<div class="mb-6 flex space-x-2">
+		<Button
+			on:click={shareOnTwitter}
+			class="flex items-center gap-2 rounded bg-blue-500 px-4 py-2 text-white"
+		>
+			<TwitterSolid class="h-5 w-5" /> Share on Twitter
+		</Button>
+
+		<Button
+			on:click={shareOnLinkedIn}
+			class="flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-white"
+		>
+			<LinkedinSolid class="h-5 w-5" /> Share on LinkedIn
+		</Button>
+
+		<Button
+			on:click={shareOnGitHub}
+			class="flex items-center gap-2 rounded bg-gray-800 px-4 py-2 text-white"
+		>
+			<GithubSolid class="h-5 w-5" /> Share on GitHub
+		</Button>
+
+		<Button
+			on:click={copyToClipboard}
+			class="flex items-center gap-2 rounded bg-gray-500 px-4 py-2 text-white"
+		>
+			Copy Link
+		</Button>
+	</div>
 
 	<h2 class="mb-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">Menu</h2>
 	<Table hoverable={true}>
@@ -196,7 +263,7 @@
 						{#if data.user?.sub === comment.commenter.id}
 							<DotsHorizontalOutline class={`dots-menu-${comment.id} dark:text-white`} />
 							<Dropdown triggeredBy={'.dots-menu-' + comment.id}>
-								<DropdownItem on:click={e => deleteComment(comment.id)}>Delete</DropdownItem>
+								<DropdownItem on:click={(e) => deleteComment(comment.id)}>Delete</DropdownItem>
 							</Dropdown>
 						{/if}
 					</svelte:fragment>
@@ -247,15 +314,17 @@
 				</CommentItem>
 				{#each comment.replies as reply}
 					<CommentItem comment={reply} articleClass="ml-6 lg:ml-12" replyButton={false}>
-                        <svelte:fragment slot="dropdownMenu">
-                            {#if data.user?.sub === reply.commenter.id}
-                                <DotsHorizontalOutline class={`dots-menu-${reply.id} dark:text-white`} />
-                                <Dropdown triggeredBy={'.dots-menu-' + reply.id}>
-                                    <DropdownItem on:click={e => deleteComment(reply.id, comment.id)}>Delete</DropdownItem>
-                                </Dropdown>
-                            {/if}
-                        </svelte:fragment>
-                    </CommentItem>
+						<svelte:fragment slot="dropdownMenu">
+							{#if data.user?.sub === reply.commenter.id}
+								<DotsHorizontalOutline class={`dots-menu-${reply.id} dark:text-white`} />
+								<Dropdown triggeredBy={'.dots-menu-' + reply.id}>
+									<DropdownItem on:click={(e) => deleteComment(reply.id, comment.id)}
+										>Delete</DropdownItem
+									>
+								</Dropdown>
+							{/if}
+						</svelte:fragment>
+					</CommentItem>
 				{/each}
 			{/each}
 		</TabItem>
