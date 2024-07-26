@@ -14,7 +14,7 @@
 		DropdownItem,
 		Checkbox,
 		DarkMode,
-		P,
+		P
 	} from 'flowbite-svelte';
 	import {
 		Search,
@@ -25,7 +25,13 @@
 	import { SearchOutline, ChevronDownOutline } from 'flowbite-svelte-icons';
 	import { createEventDispatcher } from 'svelte';
 	import { searchResults, setSearchResults } from '../stores/searchStore';
-	import { Footer, FooterCopyright, FooterLinkGroup, FooterBrand, FooterLink } from 'flowbite-svelte'; 
+	import {
+		Footer,
+		FooterCopyright,
+		FooterLinkGroup,
+		FooterBrand,
+		FooterLink
+	} from 'flowbite-svelte';
 	import { goto } from '$app/navigation';
 
 	export let data: LayoutData;
@@ -52,7 +58,7 @@
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
-				},
+				}
 			});
 			favoriteRestaurantIds = await favoritesResponse.json();
 		}
@@ -83,9 +89,14 @@
 		setSearchResults(filteredResults); // Update the store with filtered results
 
 		goto('/').then(() => {
-			const searchResultsContainer = document.querySelector<HTMLElement>('.search-results-container');
+			const searchResultsContainer = document.querySelector<HTMLElement>(
+				'.search-results-container'
+			);
 			if (searchResultsContainer)
-				window.scrollTo(0, searchResultsContainer.offsetTop - document.getElementById('top-nav')!.offsetHeight - 20);
+				window.scrollTo(
+					0,
+					searchResultsContainer.offsetTop - document.getElementById('top-nav')!.offsetHeight - 20
+				);
 		});
 	}
 
@@ -97,7 +108,12 @@
 </script>
 
 <!-- Header -->
-<Navbar rounded color="form" class="px-2 sm:px-4 py-2.5 sticky w-full z-20 top-0 start-0" id="top-nav">
+<Navbar
+	rounded
+	color="form"
+	class="sticky start-0 top-0 z-20 w-full px-2 py-2.5 sm:px-4"
+	id="top-nav"
+>
 	<NavBrand href="/" on:click={reloadPage}>
 		<img
 			src="https://i.imgur.com/u7ESt9S.png"
@@ -149,7 +165,12 @@
 	</form>
 	<div class="flex md:order-2">
 		{#if data.user}
-			<Avatar id="user-drop" class="cursor-pointer" src="/images/goose.png" dot={{ color: 'green' }} />
+			<Avatar
+				id="user-drop"
+				class="cursor-pointer"
+				src="/images/goose.png"
+				dot={{ color: 'green' }}
+			/>
 			<Dropdown triggeredBy="#user-drop">
 				<DropdownHeader>
 					<span class="block text-sm">{data.user.username}</span>
@@ -178,30 +199,34 @@
 <div class="mx-48">
 	<br />
 	<slot></slot>
-</div>	
+</div>
 
 <!-- Footer -->
-<footer class="mt-auto flex items-center justify-center py-4 bg-gray-100 dark:bg-gray-800">
-    <Footer>
-        <div class="flex justify-center items-center">
+<footer class="mt-auto flex items-center justify-center bg-gray-100 py-4 dark:bg-gray-800">
+	<Footer>
+		<div class="flex items-center justify-center">
 			<p class="text-sm text-gray-500 dark:text-gray-400">© 2024 GooseGooseGuys.</p>
-			<FooterLinkGroup ulClass="flex flex-wrap items-center ml-2 mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0 underline">
-				<FooterLink href="https://github.com/YJL3888/GooseGooseGo_CS348">See Our Source Code</FooterLink>
+			<FooterLinkGroup
+				ulClass="flex flex-wrap items-center ml-2 mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0 underline"
+			>
+				<FooterLink href="https://github.com/YJL3888/GooseGooseGo_CS348"
+					>See Our Source Code</FooterLink
+				>
 			</FooterLinkGroup>
-        </div>
-    </Footer>
+		</div>
+	</Footer>
 </footer>
 
 <style lang="postcss">
-    :global(body) {
-        @apply min-h-screen flex flex-col bg-white dark:bg-gray-900;
-    }
+	:global(body) {
+		@apply flex min-h-screen flex-col bg-white dark:bg-gray-900;
+	}
 
-    :global(#app) {
-        @apply flex flex-col min-h-screen;
-    }
+	:global(#app) {
+		@apply flex min-h-screen flex-col;
+	}
 
-    :global(main) {
-        @apply flex flex-col flex-grow;
-    }
+	:global(main) {
+		@apply flex flex-grow flex-col;
+	}
 </style>
