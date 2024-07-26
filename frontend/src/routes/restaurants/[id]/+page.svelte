@@ -11,12 +11,14 @@
 		Tabs,
 		TabItem,
 		Button,
+		GradientButton,
+		Modal,
+		Select,
 		Textarea,
 		Label,
 		Dropdown,
 		DropdownItem,
 		Spinner,
-		GradientButton
 	} from 'flowbite-svelte';
 	import {
 		DotsHorizontalOutline,
@@ -53,6 +55,16 @@
 			//datetime: review.timestamp // Use review timestamp
 		};
 	}
+
+	let formModal = false;
+	let selected; 
+	let ratings = [
+		{value: 1, name: '1'},
+		{value: 2, name: '2'},
+		{value: 3, name: '3'},
+		{value: 4, name: '4'},
+		{value: 5, name: '5'}
+	];
 
 	let comments = [];
 
@@ -197,7 +209,34 @@
 		</Button>
 	</div>
 
-	<h2 class="mb-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">Menu</h2>
+	<GradientButton color="pinkToOrange" on:click={() => (formModal = true)}>Write a review!</GradientButton> 
+
+	<Modal bind:open={formModal} size="xs" autoclose={false} class="w-full">
+		<form class="flex flex-col space-y-6">
+			<h3 class="mb-2 text-xl font-medium text-gray-900 dark:text-white">Leave a review!</h3>
+			<Label class="space-y-2">
+				<span>Select your rating</span>
+				<Select class="mt-2" items={ratings} bind:value={selected} name="rating" required />
+			</Label>
+			<Label class="space-y-2">
+				<span>Write your review</span>
+				<Textarea
+					id="review"
+					rows="6"
+					class="mb-4 resize-none"
+					placeholder="Write a review..."
+					name="comments"
+					required
+				></Textarea>
+			</Label>
+			<input type="hidden" name="restaurant_id" value={restaurant.restaurant_id} />
+			<Button type="submit" class="w-full">
+				Post Review
+			</Button>
+		</form>
+	</Modal>
+
+	<h2 class="mt-4 mb-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">Menu</h2>
 	<Table hoverable={true}>
 		<TableHead>
 			<TableHeadCell>Item Name</TableHeadCell>

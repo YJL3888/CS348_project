@@ -54,22 +54,19 @@ def get_restaurant(restaurant_id):
             cursor.execute('SELECT * FROM Comments NATURAL JOIN Users WHERE restaurant_id=%s AND deleted=0 ORDER BY posted_time', (restaurant_id,))
             restaurant['comments'] = cursor.fetchall()
             return restaurant
-
-@bp.post('/restaurants/reviews')
+        
+@bp.post('/restaurants/review')
 @jwt_required()
 def add_review():
-    data = request.get_json()
-    restaurant_id = data['restaurant_id']
-    user_id = current_user['user_id']
-    rating = data['rating']
-    comments = data.get('comments', '')
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    
     with create_connection() as connection:
-        with connection.cursor(prepared=True) as cursor:
-            cursor.execute('INSERT INTO Reviews(restaurant_id, user_id, rating, comments, timestamp) VALUES (%s, %s, %s, %s, %s)', (restaurant_id, user_id, rating, comments, timestamp))
+        with connection.cursor(prepared=True, dictionary=True) as cursor:
+            cursor.execute('''
+            INSERT INTO Reviews(restaurant_id, user_id, rating, comments, timestamp) VALUES (%s, %s, %s, %s, %s)
+            ''', (request.form['restaurant_id'], current_user['user_id'], request.form['rating'], 
+                  request.form('review'), datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
             connection.commit()
-            return {'message': 'Review added successfully!'}
+            cursor.execute('SELECT * FROM Reviews NATURAL JOIN Users WHERE review_id=%s', (cursor.lastrowid,))
+            return cursor.fetchone()
 
 @bp.post('/restaurants/comment')
 @jwt_required()
