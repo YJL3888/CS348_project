@@ -37,11 +37,11 @@
 </style>
 
 <P class="text-gray-900 dark:text-gray-100 text-center mt-5 text-2xl font-bold">
-	Reach out to the dedicated and distinguished GooseGooseGeese team here:
+	Reach out to the dedicated and distinguished support team here:
 </P>
 
 <P class="text-gray-700 dark:text-gray-400 text-center my-5">
-	The GooseGooseGeese team is always ready to connect and collaborate. Feel free to reach out to any of our members via email:
+	The GooseGooseGuys are always ready to connect and collaborate. Feel free to reach out to any of our members via email:
 </P>
 
 <ul class="list-none p-0 flex justify-center flex-wrap">

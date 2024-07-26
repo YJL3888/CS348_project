@@ -18,7 +18,7 @@
 <p class="about-text">
 	The application also provides personalized recommendations and generates reports on popular
 	restaurants based on the users’ reviews and history on them. The development team
-	(GooseGooseGeese) serves as the administrators, ensuring data integrity and performing necessary
+	(GooseGooseGuys) serves as the administrators, ensuring data integrity and performing necessary
 	updates.
 </p>
 
