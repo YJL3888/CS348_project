@@ -145,7 +145,7 @@
 	</form>
 	<div class="flex md:order-2">
 		{#if data.user}
-			<Avatar id="user-drop" class="cursor-pointer" dot={{ color: 'green' }} />
+			<Avatar id="user-drop" class="cursor-pointer" src="/images/goose.png" dot={{ color: 'green' }} />
 			<Dropdown triggeredBy="#user-drop">
 				<DropdownHeader>
 					<span class="block text-sm">{data.user.username}</span>
