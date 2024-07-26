@@ -3,7 +3,7 @@
 	import { Button, Checkbox, Label, Input, DarkMode } from 'flowbite-svelte';
 </script>
 
-<div class="min-h-screen bg-white dark:bg-gray-900">
+<div class="bg-white dark:bg-gray-900">
 	<Section name="login">
 		<Register>
 			<div class="space-y-4 rounded-md bg-white p-6 shadow-md sm:p-8 md:space-y-6 dark:bg-gray-800">
