@@ -63,7 +63,7 @@
 			favoriteRestaurantIds = await favoritesResponse.json();
 		}
 
-		const response = await fetch(`http://localhost:5000/search_restaurants?${params.toString()}`);
+		const response = await fetch(`http://localhost:5000/search_restaurants?${params.toString()}`, {cache: "no-store"});
 		const resultData = await response.json();
 		const searchResults = resultData.map((restaurant) => ({
 			id: restaurant[0],
