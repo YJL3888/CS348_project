@@ -1,5 +1,5 @@
 # Goose Goose Go - CS348 Project
-![image](https://github.com/user-attachments/assets/164f999b-e0ae-4951-a998-406b8e615eef)
+![Home](frontend/static/images/home.jpg)
 
 ## Description
 This project aims to develop a web application for tracking menus, ingredients, and prices of various food places in Waterloo.
